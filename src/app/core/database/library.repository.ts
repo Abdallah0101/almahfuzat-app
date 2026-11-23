@@ -89,19 +89,24 @@ export class LibraryRepository {
   }
 
   async saveRecording(recording: Recording, keepAttempts = true): Promise<Recording | undefined> {
-    return this.db.transaction(async () => {
-      const previous = await this.currentRecording(recording.poem_id, recording.verse_id);
-      if (keepAttempts) {
-        await this.db.run('UPDATE recordings SET is_current=0 WHERE poem_id=? AND verse_id=? AND is_current=1', [recording.poem_id, recording.verse_id]);
-      } else {
-        await this.db.run('DELETE FROM recordings WHERE poem_id=? AND verse_id=?', [recording.poem_id, recording.verse_id]);
-      }
-      await this.db.run(`INSERT INTO recordings(id,poem_id,verse_id,file_path,mime_type,codec,size_bytes,duration_ms,
+    // القراءة قبل الدفعة الذرية؛ التحديث والإدراج معًا في executeSet(transaction=true)
+    const previous = await this.currentRecording(recording.poem_id, recording.verse_id);
+    const demote = {
+      statement: 'UPDATE recordings SET is_current=0 WHERE poem_id=? AND verse_id=? AND is_current=1',
+      values: [recording.poem_id, recording.verse_id],
+    };
+    const purge = {
+      statement: 'DELETE FROM recordings WHERE poem_id=? AND verse_id=?',
+      values: [recording.poem_id, recording.verse_id],
+    };
+    const insert = {
+      statement: `INSERT INTO recordings(id,poem_id,verse_id,file_path,mime_type,codec,size_bytes,duration_ms,
         created_at,verse_text_hash,is_current,is_archived,text_changed) VALUES(?,?,?,?,?,?,?,?,?,?,1,0,0)`,
-        [recording.id, recording.poem_id, recording.verse_id, recording.file_path, recording.mime_type,
-          recording.codec, recording.size_bytes, recording.duration_ms, recording.created_at, recording.verse_text_hash]);
-      return previous;
-    });
+      values: [recording.id, recording.poem_id, recording.verse_id, recording.file_path, recording.mime_type,
+        recording.codec, recording.size_bytes, recording.duration_ms, recording.created_at, recording.verse_text_hash],
+    };
+    await this.db.executeSet(keepAttempts ? [demote, insert] : [purge, insert], true);
+    return previous;
   }
 
   async currentRecording(poemId: string, verseId: string): Promise<Recording | undefined> {

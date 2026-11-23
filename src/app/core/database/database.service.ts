@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection, capSQLiteSet } from '@capacitor-community/sqlite';
 
 @Injectable({ providedIn: 'root' })
 export class DatabaseService {
@@ -50,9 +50,15 @@ export class DatabaseService {
     return (await this.db!.query(sql, values)).values ?? [];
   }
 
+  async executeSet(set: capSQLiteSet[], transaction = true): Promise<void> {
+    await this.init();
+    await this.db!.executeSet(set, transaction, 'no', true);
+    await this.persistWeb();
+  }
+
   async run(sql: string, values: unknown[] = []): Promise<number> {
     await this.init();
-    const result = await this.db!.run(sql, values, false, 'all', true);
+    const result = await this.db!.run(sql, values, false, 'no', true);
     await this.persistWeb();
     return result.changes?.changes ?? 0;
   }
@@ -66,20 +72,24 @@ export class DatabaseService {
   async transaction<T>(operation: () => Promise<T>): Promise<T> {
     await this.init();
     if (this.transactionDepth > 0) return operation();
-    await this.db!.execute('BEGIN IMMEDIATE;', false);
     this.transactionDepth++;
-    let result: T;
     try {
-      result = await operation();
-      await this.db!.execute('COMMIT;', false);
+      await this.db!.execute('BEGIN IMMEDIATE;', false);
     } catch (error) {
-      await this.db!.execute('ROLLBACK;', false);
       this.transactionDepth--;
       throw error;
     }
-    this.transactionDepth--;
-    await this.persistWeb();
-    return result;
+    try {
+      const result = await operation();
+      await this.db!.execute('COMMIT;', false);
+      this.transactionDepth--;
+      await this.persistWeb();
+      return result;
+    } catch (error) {
+      try { await this.db!.execute('ROLLBACK;', false); } catch { /* الصلة قد تكون انكسرت already */ }
+      this.transactionDepth--;
+      throw error;
+    }
   }
 
   async getSetting<T>(key: string, fallback: T): Promise<T> {

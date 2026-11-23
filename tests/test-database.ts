@@ -17,6 +17,16 @@ export class TestDatabase {
     statement.free();
     return rows;
   }
+  async executeSet(set: { statement: string; values?: unknown[] }[], transaction = true): Promise<void> {
+    if (transaction) this.db.exec('BEGIN');
+    try {
+      for (const item of set) this.db.run(item.statement, (item.values ?? []) as never);
+      if (transaction) this.db.exec('COMMIT');
+    } catch (error) {
+      if (transaction) this.db.exec('ROLLBACK');
+      throw error;
+    }
+  }
   async run(sql: string, values: unknown[] = []): Promise<number> {
     this.db.run(sql, values as never);
     return this.db.getRowsModified();
