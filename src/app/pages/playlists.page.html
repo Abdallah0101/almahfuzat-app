@@ -1,0 +1,17 @@
+<ion-header><ion-toolbar color="primary"><ion-buttons slot="start"><ion-button routerLink="/"><ion-icon name="arrow-back-outline" /></ion-button></ion-buttons><ion-title>مجموعاتي الصوتية</ion-title></ion-toolbar></ion-header>
+<ion-content>
+  @if (exporter.progress | async; as progress) { @if (progress.active) { <ion-progress-bar [value]="progress.percent / 100" /><p class="ion-padding">إنشاء الملف: {{ progress.percent }}%</p> } }
+  @for (playlist of playlists(); track playlist.id) {
+    <ion-card>
+      <ion-card-header><ion-card-title>{{ playlist.name }}</ion-card-title><ion-card-subtitle>{{ titles.get(playlist.poem_id) }} · {{ playlist.verse_ids.length }} بيت</ion-card-subtitle></ion-card-header>
+      <ion-card-content>
+        <p>تكرار البيت {{ playlist.settings.verseRepeats }} · تكرار المجموعة {{ playlist.settings.groupRepeats }} · فاصل {{ playlist.settings.gapSeconds }}ث</p>
+        <div class="toolbar-actions">
+          <ion-button size="small" (click)="play(playlist)"><ion-icon name="play-outline" /> تشغيل</ion-button>
+          <ion-button size="small" fill="outline" (click)="export(playlist)"><ion-icon name="share-outline" /> تصدير ومشاركة</ion-button>
+          <ion-button size="small" fill="clear" color="danger" (click)="remove(playlist)"><ion-icon name="trash-outline" /> حذف</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  } @empty { <div class="empty-state">احفظ مجموعة من صفحة أي منظومة بعد تحديد الأبيات.</div> }
+</ion-content>

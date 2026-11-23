@@ -1,0 +1,28 @@
+<ion-header><ion-toolbar color="primary"><ion-buttons slot="start"><ion-button routerLink="/"><ion-icon name="arrow-back-outline" /></ion-button></ion-buttons><ion-title>مراجعة اليوم</ion-title></ion-toolbar></ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <h2>هدفك اليوم</h2>
+      <p>الجديد: {{ counts().memorized }}/{{ newGoal }} · المراجعات: {{ counts().reviews }}/{{ reviewGoal }}</p>
+      <ion-progress-bar [value]="counts().reviews / reviewGoal" />
+      <ion-item><ion-label>أبيات جديدة</ion-label><ion-input type="number" min="1" [(ngModel)]="newGoal" /></ion-item>
+      <ion-item><ion-label>مراجعة قديمة</ion-label><ion-input type="number" min="1" [(ngModel)]="reviewGoal" /></ion-item>
+      <ion-button size="small" (click)="saveGoals()">حفظ الهدف</ion-button>
+      <ion-button size="small" fill="outline" (click)="playAll()">تشغيل مراجعة اليوم المسجلة</ion-button>
+    </ion-card-content>
+  </ion-card>
+  @for (item of items(); track item.verse.progress.poem_id + '/' + item.verse.id) {
+    <ion-card>
+      <ion-card-content>
+        <ion-note>{{ item.poemTitle }} · البيت {{ item.verse.number }}</ion-note>
+        <p class="verse-text">{{ item.verse.text }}</p>
+        <p class="muted">المراجعات السابقة: {{ item.verse.progress.review_count }}</p>
+        <div class="toolbar-actions">
+          @if (item.verse.recording) { <ion-button size="small" (click)="play(item)"><ion-icon name="play-outline" /> استماع</ion-button> }
+          <ion-button size="small" color="success" (click)="review(item, true)"><ion-icon name="checkmark-outline" /> تذكرته</ion-button>
+          <ion-button size="small" color="warning" (click)="review(item, false)">أحتاج مراجعة</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  } @empty { <div class="empty-state">لا توجد أبيات مستحقة الآن. يمكنك مراجعة أي مجموعة من صفحة المنظومة.</div> }
+</ion-content>

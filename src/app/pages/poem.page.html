@@ -1,0 +1,102 @@
+@if (poem(); as poem) {
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start"><ion-button routerLink="/" aria-label="عودة"><ion-icon name="arrow-back-outline" /></ion-button></ion-buttons>
+      <ion-title>{{ poem.title }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <div class="ion-padding">
+      <h1>{{ poem.title }}</h1>
+      <p>{{ poem.author }} · {{ poem.science }} · {{ poem.verses.length }} بيت</p>
+      @if (poem.description) { <p class="muted">{{ poem.description }}</p> }
+      @if (!poem.is_complete) { <ion-badge color="warning">منظومة غير مكتملة الإضافة</ion-badge> }
+    </div>
+    <ion-accordion-group>
+      <ion-accordion value="playback">
+        <ion-item slot="header"><ion-label>التحديد والتشغيل والتصدير</ion-label></ion-item>
+        <div slot="content" class="selection-tools">
+          <ion-item><ion-label>من رقم</ion-label><ion-input type="number" min="1" [(ngModel)]="rangeStart" /></ion-item>
+          <ion-item><ion-label>إلى رقم</ion-label><ion-input type="number" min="1" [(ngModel)]="rangeEnd" /></ion-item>
+          <div class="toolbar-actions">
+            <ion-button size="small" (click)="selectRange()">تحديد النطاق</ion-button>
+            <ion-button size="small" (click)="selectRecorded()">كل المسجل</ion-button>
+            <ion-button size="small" fill="outline" (click)="clearSelection()">مسح التحديد</ion-button>
+          </div>
+          @if (poem.chapters.length) {
+            <ion-select placeholder="تحديد باب كامل" (ionChange)="selectChapter($event.detail.value)">
+              @for (chapter of poem.chapters; track chapter.id) { <ion-select-option [value]="chapter.id">{{ chapter.title }}</ion-select-option> }
+            </ion-select>
+          }
+          <ion-item><ion-label>تكرار كل بيت</ion-label><ion-input type="number" min="1" max="100" [(ngModel)]="settings.verseRepeats" /></ion-item>
+          <ion-item><ion-label>تكرار المجموعة</ion-label><ion-input type="number" min="1" max="100" [(ngModel)]="settings.groupRepeats" /></ion-item>
+          <ion-item><ion-label>الفاصل الصامت</ion-label>
+            <ion-select [(ngModel)]="settings.gapSeconds"><ion-select-option [value]="0">0</ion-select-option><ion-select-option [value]="1">ثانية</ion-select-option><ion-select-option [value]="3">3 ثوانٍ</ion-select-option><ion-select-option [value]="5">5 ثوانٍ</ion-select-option></ion-select>
+          </ion-item>
+          <ion-item><ion-label>سرعة التشغيل</ion-label>
+            <ion-select [(ngModel)]="settings.speed"><ion-select-option [value]="0.75">0.75x</ion-select-option><ion-select-option [value]="1">1x</ion-select-option><ion-select-option [value]="1.25">1.25x</ion-select-option><ion-select-option [value]="1.5">1.5x</ion-select-option></ion-select>
+          </ion-item>
+          <ion-item><ion-label>التسجيل المتتابع لغير المسجل</ion-label><ion-toggle [(ngModel)]="sequential" /></ion-item>
+          <p class="muted">المحدد: {{ selected().size }} · الحجم التقريبي للتصدير: {{ (estimatedBytes() / 1048576).toFixed(1) }} ميغابايت</p>
+          <div class="toolbar-actions">
+            <ion-button (click)="playSelected()"><ion-icon name="play-outline" /> تشغيل المحدد</ion-button>
+            <ion-button fill="outline" (click)="playAllRecorded()">تشغيل جميع المسجل</ion-button>
+            <ion-button fill="outline" (click)="savePlaylist()"><ion-icon name="save-outline" /> حفظ مجموعة</ion-button>
+            <ion-button color="secondary" (click)="exportSelected()"><ion-icon name="download-outline" /> إنشاء ملف صوتي</ion-button>
+          </div>
+          @if (exporter.progress | async; as progress) {
+            @if (progress.active || progress.percent > 0) {
+              <ion-progress-bar [value]="progress.percent / 100" />
+              <p>تقدم التصدير: {{ progress.percent }}% ({{ progress.processedItems }}/{{ progress.totalItems }})</p>
+            }
+          }
+          @if (lastExport(); as result) { <ion-button fill="clear" (click)="exporter.share(result)"><ion-icon name="share-outline" /> مشاركة آخر ملف</ion-button> }
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    <ion-searchbar [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="ابحث داخل الأبيات" />
+    @for (verse of visibleVerses(); track verse.id) {
+      <ion-card class="verse-card" [class.needs-review]="verse.progress.status === 'needs_review'">
+        <ion-card-content>
+          <div class="toolbar-actions">
+            <ion-checkbox [checked]="selected().has(verse.id)" (ionChange)="toggle(verse.id)" [attr.aria-label]="'تحديد البيت ' + verse.number" />
+            <ion-badge>البيت {{ verse.number }}</ion-badge>
+            @if (verse.recording?.text_changed) { <ion-badge color="warning">تغيّر النص؛ راجع التسجيل</ion-badge> }
+          </div>
+          <p class="verse-text">{{ verse.first_hemistich }}</p>
+          <p class="verse-text">{{ verse.second_hemistich }}</p>
+          <div class="toolbar-actions">
+            <ion-button size="small" color="tertiary" (click)="beginRecording(verse)"><ion-icon name="mic-outline" /> {{ verse.recording ? 'إعادة تسجيل' : 'تسجيل' }}</ion-button>
+            @if (verse.recording) { <ion-button size="small" (click)="playSingle(verse)"><ion-icon name="play-outline" /> استماع</ion-button> }
+            <ion-select [value]="verse.progress.status" (ionChange)="setStatus(verse, $event.detail.value)" interface="popover" aria-label="حالة الحفظ">
+              @for (status of statuses; track status) {
+                <ion-select-option [value]="status">{{ statusLabels[status] }}</ion-select-option>
+              }
+            </ion-select>
+          </div>
+          @if (recording.session | async; as session) {
+            @if (session.verse.id === verse.id) {
+              <div class="recording-panel">
+                @if (session.recording) {
+                  <p><ion-icon name="mic-outline" /> جارٍ تسجيل البيت {{ verse.number }}…</p>
+                  <ion-button color="danger" (click)="stopRecording()"><ion-icon name="stop-outline" /> إيقاف</ion-button>
+                } @else {
+                  <p>اكتمل التسجيل. استمع إليه ثم احفظه أو أعده.</p>
+                  <ion-button size="small" (click)="preview(session)">معاينة</ion-button>
+                  <ion-button size="small" color="success" (click)="saveRecording()">حفظ</ion-button>
+                  <ion-button size="small" fill="outline" (click)="restartRecording(session)">إعادة التسجيل</ion-button>
+                }
+                <ion-button size="small" fill="clear" color="danger" (click)="cancelRecording()">إلغاء</ion-button>
+              </div>
+            }
+          }
+        </ion-card-content>
+      </ion-card>
+    }
+    @if (visibleVerses().length < filteredVerses().length) {
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="showMore($event)"><ion-infinite-scroll-content loading-text="عرض أبيات أخرى" /></ion-infinite-scroll>
+    }
+  </ion-content>
+} @else {
+  <ion-content><div class="empty-state">المنظومة غير موجودة محليًا.</div></ion-content>
+}

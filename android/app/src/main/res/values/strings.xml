@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">المحفوظات</string>
+    <string name="title_activity_main">المحفوظات</string>
+    <string name="package_name">org.mahfuzat.app</string>
+    <string name="custom_url_scheme">org.mahfuzat.app</string>
+</resources>

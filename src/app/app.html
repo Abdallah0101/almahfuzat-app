@@ -1,0 +1,7 @@
+<ion-app dir="rtl">
+  @if (error()) {
+    <ion-note color="danger" class="startup-error">تعذر تهيئة التطبيق: {{ error() }}</ion-note>
+  }
+  <ion-router-outlet />
+  <app-player-bar />
+</ion-app>
