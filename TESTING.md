@@ -1,51 +1,48 @@
-# مصفوفة اختبار المحفوظات
+# Mahfuzat testing
 
-## الاختبارات الآلية المحلية
+## Local checks
 
 ```sh
 npm test
 npm run build
 npx cap sync android
 cd android
-./gradlew assembleDebug assembleDebugAndroidTest
+./gradlew :app:assembleDebug :app:assembleDebugAndroidTest
 ```
 
-مع جهاز أو محاكي:
+With an Android device or emulator connected:
 
 ```sh
 adb devices
-./gradlew connectedDebugAndroidTest
+./gradlew :app:connectedDebugAndroidTest
 ```
 
-يمكن قطع الشبكة قبل `connectedDebugAndroidTest` للتحقق من أن التشغيل والتصدير محليان. أعد الشبكة بعد الاختبار.
+Playback and export tests can run with airplane mode enabled to verify offline behavior. Restore network connectivity afterward.
 
-## تغطية السيناريوهات المطلوبة
+## Automated coverage
 
-1. **منظومة من 10 أبيات عبر Telegram ثم ظهورها:** `sync.integration.test.ts` يغطي النشر المكافئ والمزامنة. الربط الحقيقي بـ Telegram وGitHub Pages يحتاج رموز المستخدم ويُختبر يدويًا؛ لا تغطيه محاكاة الشبكة.
-2. **إضافة 10 دون تكرار:** اختبار SQLite آلي، مع فحص عنوان/مؤلف ومراجعة ومعرفات في الجسر.
-3. **تسجيل 1–5 وتشغيلها متتابعة:** `AndroidAudioInstrumentedTest` يسجل خمسة AAC/M4A ويشغل قائمة Media3.
-4. **تكرار الثالث 5 مرات قبل الرابع:** الاختبار نفسه ينتظر الانتقال المنطقي إلى الرابع بعد التكرارات.
-5. **WAV موحد:** الاختبار يفك الملفات عبر MediaCodec، ويتحقق من RIFF/WAVE والقنوات ومعدل العينات وحجم chunk والمدة.
-6. **تصحيح نص بيت مسجل:** اختبار SQLite يثبت بقاء التسجيل وارتفاع `text_changed`.
-7. **إدخال بيت في المنتصف:** اختبار SQLite يثبت بقاء `stable-003` وانتقال رقمه إلى 4 دون أرشفة تسجيله.
-8. **دون إنترنت:** اختبارات الجهاز للتشغيل والتصدير يمكن تشغيلها مع قطع الشبكة. المزامنة نفسها تتطلب الشبكة بطبيعتها.
-9. **الشاشة والخلفية:** اختبار Media3 ينتقل إلى Home ثم يطفئ الشاشة ويتحقق من استمرار حالة التشغيل. اختبار سماعة بلوتوث مادية يحتاج جهازًا وسماعة حقيقيين.
-10. **فشل JSON دون إتلاف البيانات:** اختبار بصمة SHA-256 خاطئة يرفض المزامنة ويتحقق من بقاء الإصدار والأبيات السابقين.
-11. **نسخة واستعادتها:** `BackupInstrumentedTest` ينشئ ZIP حقيقيًا ويستعيده ويتحقق من البصمة والمحتوى؛ `backup.test.ts` يتحقق من دمج SQLite على قاعدة جديدة ومن عدم تكرار الاستعادة أو استبدال التسجيل الحالي.
-12. **Telegram غير مصرح:** اختبار الجسر يثبت الرفض قبل استدعاء المعالجة أو تنزيل المرفق. يلزم اختبار قبول/رفض نهائي على البوت الحقيقي بعد الإعداد.
+- Content schema validation and Arabic search normalization.
+- Incremental poem additions without duplicate verses.
+- Text changes that preserve recordings and set `text_changed`.
+- Middle insertion that preserves stable verse IDs and recording links.
+- SHA-256 mismatch rejection without damaging the previous catalog.
+- Recording replacement with and without history retention.
+- Backup restore into a fresh database, idempotency, and conflict handling.
+- Native AAC recording, sequential Media3 playback, repeats, background/screen-off playback, WAV export, and ZIP restore.
 
-## نتيجة التحقق المحلي في 2026-11-23
+## Verified results on 2026-11-23
 
-- نجحت 14 اختبارًا في `npm test`، و5 اختبارات لمستودع المحتوى، و10 اختبارات لجسر Telegram.
-- نجح `:app:connectedDebugAndroidTest` على Pixel 4 API 34: 3 اختبارات، بلا فشل، مع وضع الطيران وقطع Wi-Fi. شملت التسجيل والتشغيل المتتابع والتكرار والخلفية/الشاشة وWAV وZIP.
-- ثُبّت `app-debug.apk` وفُتحت المكتبة والمنظومة التجريبية فعليًا على المحاكي، وظهرت الأبيات والشطران وأزرار التسجيل.
-- لم يُختبر اتصال حقيقي بـ Telegram أو GitHub Pages، ولم تُختبر سماعة Bluetooth مادية؛ يلزمان إعدادًا/عتادًا من المستخدم.
+- All 14 app unit/integration tests passed.
+- All 5 content repository tests passed.
+- Three Android instrumentation tests passed on Pixel 4 API 34 with airplane mode and Wi-Fi disabled.
+- Library and poem screens were opened on Android, including hemistichs and recording controls.
+- The Save crash was reproduced in 1.0.1: `FilesystemPlugin.mkdir` failed with `NoClassDefFoundError` for Kotlin `SpillingKt` because the build forced Kotlin 1.8.22.
+- The dependency fix preserves Kotlin 2.2.20. The complete record, stop, and Save flow was repeated successfully in 1.0.2: directory creation, file rename, and transactional SQLite insert completed without closing the app.
 
-## فحص خارجي يدوي قبل الإنتاج
+## Manual checks before production distribution
 
-- إنشاء بوت تجريبي وضبط معرّف واحد، ثم إرسال 10 أبيات ومراقبة commit وGitHub Actions والمزامنة.
-- إرسال الأبيات 11–20، ثم نص مشكوك فيه من PDF، والتأكد من طلب المراجعة بدل التخمين.
-- إرسال أمر من حساب آخر والتأكد من الرفض.
-- على هاتف مادي: ميكروفون حقيقي، إشعار شاشة القفل، سماعة Bluetooth، مكالمة/صوت خارجي للتحقق من Audio Focus.
-- مشاركة WAV وZIP عبر Telegram، واستيراد ZIP على تثبيت جديد.
-- تجربة نطاق كبير وتقدير المساحة؛ WAV غير مضغوط وقد يصل إلى حد RIFF البالغ 4GiB، وعندها يفشل التصدير برسالة بدل إنتاج ملف تالف.
+- Test the physical-device microphone, lock-screen notification, Bluetooth headset controls, and audio focus during calls or other media.
+- Share WAV and ZIP files through Telegram or another Android app.
+- Restore a ZIP backup on a fresh installation.
+- Exercise large playlists and long exports. WAV is uncompressed and the exporter rejects output beyond the RIFF size limit instead of producing a corrupt file.
+- Verify that content pushes publish successfully through GitHub Actions and appear after app synchronization.

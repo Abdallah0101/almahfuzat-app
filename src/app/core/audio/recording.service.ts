@@ -47,8 +47,8 @@ export class RecordingService {
     const id = newId('recording');
     const poemId = session.verse.progress.poem_id;
     const target = `recordings/${poemId}/${session.verse.id}/${id}.m4a`;
-    // mkdir tolerante: em regravação do mesmo verso a pasta já existe e o plugin
-    // pode rejeitar com "Directory exists" — nesse caso seguimos pro rename.
+    // Re-recording a verse may reuse its directory.
+    // The final rename still reports any real filesystem failure.
     await Filesystem.mkdir({ path: `recordings/${poemId}/${session.verse.id}`, directory: Directory.Data, recursive: true })
       .catch(() => undefined);
     await Filesystem.rename({ from: session.pendingPath, to: target, directory: Directory.Data, toDirectory: Directory.Data });

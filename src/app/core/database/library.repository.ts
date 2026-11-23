@@ -89,7 +89,7 @@ export class LibraryRepository {
   }
 
   async saveRecording(recording: Recording, keepAttempts = true): Promise<Recording | undefined> {
-    // القراءة قبل الدفعة الذرية؛ التحديث والإدراج معًا في executeSet(transaction=true)
+    // Read before the atomic batch; executeSet applies demotion/purge and insert together.
     const previous = await this.currentRecording(recording.poem_id, recording.verse_id);
     const demote = {
       statement: 'UPDATE recordings SET is_current=0 WHERE poem_id=? AND verse_id=? AND is_current=1',

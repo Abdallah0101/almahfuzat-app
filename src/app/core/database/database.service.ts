@@ -86,7 +86,7 @@ export class DatabaseService {
       await this.persistWeb();
       return result;
     } catch (error) {
-      try { await this.db!.execute('ROLLBACK;', false); } catch { /* الصلة قد تكون انكسرت already */ }
+      try { await this.db!.execute('ROLLBACK;', false); } catch { /* The connection may already have rolled back or closed. */ }
       this.transactionDepth--;
       throw error;
     }
