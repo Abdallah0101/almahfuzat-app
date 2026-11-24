@@ -14,6 +14,7 @@ import { DatabaseService } from '../core/database/database.service';
 export class SettingsPage implements OnInit {
   contentUrl = '';
   fontScale = 1;
+  darkTheme = false;
   keepAttempts = true;
   lastSync = '';
   readonly archivedCount = signal(0);
@@ -27,6 +28,7 @@ export class SettingsPage implements OnInit {
   async ngOnInit(): Promise<void> {
     this.contentUrl = await this.sync.contentUrl();
     this.fontScale = await this.db.getSetting('font_scale', 1);
+    this.darkTheme = await this.db.getSetting('dark_theme', false);
     this.keepAttempts = await this.db.getSetting('keep_attempts', true);
     this.lastSync = await this.db.getSetting('last_successful_sync', '');
     const archived = await this.db.query<{ count: number }>('SELECT COUNT(*) AS count FROM recordings WHERE is_archived=1');
@@ -36,6 +38,11 @@ export class SettingsPage implements OnInit {
   async saveUrl(): Promise<void> {
     try { await this.sync.setContentUrl(this.contentUrl); await this.show('حُفظ عنوان المحتوى.'); }
     catch (error) { await this.show(error instanceof Error ? error.message : String(error)); }
+  }
+
+  async setDarkTheme(): Promise<void> {
+    document.documentElement.dataset['theme'] = this.darkTheme ? 'dark' : 'light';
+    await this.db.setSetting('dark_theme', this.darkTheme);
   }
 
   async setFontScale(): Promise<void> {

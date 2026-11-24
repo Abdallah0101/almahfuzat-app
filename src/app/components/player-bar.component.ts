@@ -65,6 +65,17 @@ import { IONIC_COMPONENTS } from '../ionic.imports';
     .stop-control { width: 31px; height: 30px; min-height: 30px; }
     ion-select { width: 65px; min-height: 30px; padding: 0 7px; color: #526b5d; font-size: .65rem; font-weight: 700; }
     .player-error { display: block; padding-top: 4px; font-size: .65rem; }
+    :host-context(html[data-theme='dark']) .player { border-color: #2b3b33; background: rgb(23 33 29 / 97%); box-shadow: 0 14px 45px rgb(0 0 0 / 42%); }
+    :host-context(html[data-theme='dark']) .artwork { background: #1d3429; color: #91cda7; }
+    :host-context(html[data-theme='dark']) .track-copy small,
+    :host-context(html[data-theme='dark']) .title span { color: #8fa399; }
+    :host-context(html[data-theme='dark']) .title { color: #e4ece7; }
+    :host-context(html[data-theme='dark']) .queue-count,
+    :host-context(html[data-theme='dark']) .secondary-controls { background: #202d26; color: #a9bdb1; }
+    :host-context(html[data-theme='dark']) ion-range { --bar-background: #304238; --bar-background-active: #72b78f; --knob-background: #72b78f; }
+    :host-context(html[data-theme='dark']) ion-button { --color: #b2c5ba; --background-hover: #26372d; }
+    :host-context(html[data-theme='dark']) .main-control { --background: #327b5c; --color: #fff; }
+    :host-context(html[data-theme='dark']) ion-select { color: #b2c5ba; }
     @media (max-width: 480px) {
       :host { right: 8px; bottom: calc(var(--player-bottom, 7px) + env(safe-area-inset-bottom)); left: 8px; }
       .player { padding: 10px 12px 8px; border-radius: 17px; }

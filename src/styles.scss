@@ -1,5 +1,6 @@
 @import '@fontsource/amiri/400.css';
 @import '@fontsource/amiri/700.css';
+@import '@fontsource-variable/noto-sans-arabic/index.css';
 @import '@ionic/angular/css/core.css';
 @import '@ionic/angular/css/normalize.css';
 @import '@ionic/angular/css/structure.css';
@@ -9,12 +10,13 @@
 @import '@ionic/angular/css/flex-utils.css';
 
 :root {
-  --app-font-ui: Tahoma, Arial, sans-serif;
+  --app-font-ui: 'Noto Sans Arabic Variable', Tahoma, Arial, sans-serif;
   --app-font-display: 'Amiri', 'Noto Naskh Arabic', serif;
   --app-ink: #18352e;
   --app-ink-soft: #63736d;
   --app-forest: #123f34;
   --app-forest-deep: #0b3028;
+  --app-heading: var(--app-forest-deep);
   --app-emerald: #1e6a54;
   --app-gold: #c9a15e;
   --app-gold-soft: #f2e8d5;
@@ -170,7 +172,7 @@ a { color: inherit; text-decoration: none; }
 }
 .page-intro h1 {
   margin: 0;
-  color: var(--app-forest-deep);
+  color: var(--app-heading);
   font-family: var(--app-font-display);
   font-size: clamp(1.85rem, 4vw, 2.35rem);
   line-height: 1.35;
@@ -325,7 +327,7 @@ a { color: inherit; text-decoration: none; }
 .poem-symbol { display: grid; place-items: center; width: 47px; height: 47px; flex: 0 0 47px; border: 1px solid #e6ddcb; border-radius: 14px 14px 14px 5px; background: #f6f0e5; color: #a17b41; font-size: 1.4rem; }
 .poem-heading-copy { flex: 1; min-width: 0; }
 .poem-card ion-card-subtitle { margin: 0 0 3px; color: #8a7656; font-family: var(--app-font-ui); font-size: .63rem; font-weight: 700; letter-spacing: 0; text-transform: none; }
-.poem-card ion-card-title { overflow: hidden; color: var(--app-forest-deep); font-family: var(--app-font-display); font-size: 1.55rem; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+.poem-card ion-card-title { overflow: hidden; color: var(--app-heading); font-family: var(--app-font-display); font-size: 1.55rem; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
 .poem-card-arrow { align-self: center; color: #b2bcb5; font-size: 1rem; }
 .poem-author { margin: 10px 59px 0 0; overflow: hidden; color: var(--app-ink-soft); font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
 .incomplete-badge { --ion-color-warning: #f7e9d1; --ion-color-warning-contrast: #916422; align-self: flex-start; width: fit-content; margin: 12px 59px 0 0; background: #f7e9d1; color: #916422; }
@@ -472,7 +474,7 @@ a { color: inherit; text-decoration: none; }
 .playlist-heading { display: flex; align-items: center; gap: 12px; }
 .playlist-icon { display: grid; place-items: center; width: 48px; height: 48px; flex: 0 0 48px; border: 1px solid #d8e3da; border-radius: 15px; background: #edf3ee; color: var(--app-emerald); font-size: 1.4rem; }
 .playlist-heading-copy { flex: 1; min-width: 0; }
-.playlist-card ion-card-title { overflow: hidden; color: var(--app-forest-deep); font-family: var(--app-font-display); font-size: 1.5rem; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+.playlist-card ion-card-title { overflow: hidden; color: var(--app-heading); font-family: var(--app-font-display); font-size: 1.5rem; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
 .playlist-card ion-card-subtitle { margin-top: 3px; overflow: hidden; color: var(--app-ink-soft); font-size: .65rem; letter-spacing: 0; text-overflow: ellipsis; text-transform: none; white-space: nowrap; }
 .playlist-count { flex: 0 0 auto; padding: 5px 9px; border-radius: 8px; background: #f4f0e7; color: #937440; font-size: .63rem; font-weight: 700; }
 .playlist-card ion-card-content { padding: 5px 19px 17px; }
@@ -496,7 +498,7 @@ a { color: inherit; text-decoration: none; }
 .settings-section-icon { display: grid; place-items: center; width: 43px; height: 43px; flex: 0 0 43px; border-radius: 13px; background: #edf3ee; color: var(--app-emerald); font-size: 1.3rem; }
 .settings-section-icon.gold { background: #f7f0e4; color: #a37c3d; }
 .settings-section-icon.blue { background: #edf2f4; color: #4a717b; }
-.settings-card ion-card-title { color: var(--app-forest-deep); font-family: var(--app-font-display); font-size: 1.4rem; line-height: 1.4; }
+.settings-card ion-card-title { color: var(--app-heading); font-family: var(--app-font-display); font-size: 1.4rem; line-height: 1.4; }
 .settings-card ion-card-subtitle { margin-top: 2px; color: var(--app-ink-soft); font-size: .62rem; font-weight: 400; letter-spacing: 0; line-height: 1.7; text-transform: none; }
 .settings-card ion-card-content { padding: 7px 20px 20px; }
 .settings-field { --background: #f7f8f5; --border-color: transparent; --padding-start: 13px; --inner-padding-end: 13px; border: 1px solid #e7eae5; border-radius: 12px; }
@@ -515,6 +517,102 @@ a { color: inherit; text-decoration: none; }
 .backup-description { margin: 4px 0 0; color: var(--app-ink-soft); font-size: .7rem; line-height: 1.9; }
 .privacy-note { display: flex; align-items: center; gap: 7px; margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: #edf3ee; color: #527060; font-size: .64rem; }
 .privacy-note ion-icon { font-size: 1rem; }
+
+ion-card { background: var(--app-surface); }
+.theme-setting > ion-icon { color: #8a7348; font-size: 1.2rem; }
+.theme-setting ion-label small { display: block; margin-top: 3px; color: var(--app-ink-soft); font-size: .58rem; line-height: 1.6; }
+.poem-stat strong { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.poem-stat strong ion-icon { color: #81978a; font-size: .8rem; }
+.poem-card-arrow { padding: 5px; border-radius: 8px; background: #f2f5f1; }
+
+:root { color-scheme: light; }
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --app-ink: #e4ece7;
+  --app-ink-soft: #9caea4;
+  --app-heading: #e8f0eb;
+  --app-emerald: #70bc92;
+  --app-paper: #0d1512;
+  --app-surface: #17211d;
+  --app-line: #2a3932;
+  --app-shadow: 0 8px 28px rgb(0 0 0 / 18%);
+  --app-shadow-lg: 0 18px 50px rgb(0 0 0 / 28%);
+  --ion-card-background: var(--app-surface);
+  --ion-background-color: var(--app-paper);
+  --ion-text-color: var(--app-ink);
+  --ion-color-medium: #a1b1a8;
+  --ion-color-medium-rgb: 161, 177, 168;
+  --ion-color-medium-contrast: #101713;
+  --ion-color-medium-contrast-rgb: 16, 23, 19;
+  --ion-color-medium-shade: #8d9c94;
+  --ion-color-medium-tint: #acbbb3;
+}
+:root[data-theme='dark'] ion-item { --color: var(--app-ink); }
+:root[data-theme='dark'] ion-progress-bar { --background: #2a3932; }
+:root[data-theme='dark'] .startup-error,
+:root[data-theme='dark'] .selection-tools,
+:root[data-theme='dark'] .control-accordion,
+:root[data-theme='dark'] .verse-search-panel { background: var(--app-surface); }
+:root[data-theme='dark'] .control-accordion ion-item[slot='header'] { --background: var(--app-surface); }
+:root[data-theme='dark'] .custom-search { --placeholder-color: #71877a; --icon-color: #8fa99a; }
+:root[data-theme='dark'] .filter-control,
+:root[data-theme='dark'] .poem-stats,
+:root[data-theme='dark'] .control-field,
+:root[data-theme='dark'] .export-status,
+:root[data-theme='dark'] .playlist-setting { border-color: #2b3a33; background: #202c26; color: #b3c4ba; }
+:root[data-theme='dark'] .settings-field { --background: #202c26; border-color: #2b3a33; }
+:root[data-theme='dark'] .filter-row,
+:root[data-theme='dark'] .poem-stat,
+:root[data-theme='dark'] .playlist-actions { border-color: #2a3932; }
+:root[data-theme='dark'] .poem-symbol,
+:root[data-theme='dark'] .settings-section-icon.gold,
+:root[data-theme='dark'] .playlist-count { border-color: #4b4028; background: #332c1e; color: #d2b475; }
+:root[data-theme='dark'] .poem-stat strong { color: #c4e4d2; }
+:root[data-theme='dark'] .poem-stat strong ion-icon { color: #83a891; }
+:root[data-theme='dark'] .poem-card-arrow { background: #223129; color: #9fb3a7; }
+:root[data-theme='dark'] .count-badge { border-color: #30463a; background: #1d2d25; color: #8fc7a6; }
+:root[data-theme='dark'] .empty-state { border-color: #324139; background: #131d18; }
+:root[data-theme='dark'] .empty-state-icon { background: #1d3127; color: #82bfa0; }
+:root[data-theme='dark'] .empty-state h2 { color: var(--app-heading); }
+:root[data-theme='dark'] .sync-error { background: #392321; }
+:root[data-theme='dark'] .incomplete-badge { --ion-color-warning: #493a20; --ion-color-warning-contrast: #e9c98b; background: #493a20; color: #e9c98b; }
+:root[data-theme='dark'] .selection-summary { background: #1c3025; color: #a5c3b1; }
+:root[data-theme='dark'] .selection-summary strong,
+:root[data-theme='dark'] .last-export strong { color: #d8e9df; }
+:root[data-theme='dark'] .last-export,
+:root[data-theme='dark'] .export-banner,
+:root[data-theme='dark'] .privacy-note { border-color: #294334; background: #17291f; color: #a6c5b1; }
+:root[data-theme='dark'] .last-export p { color: #a6c5b1; }
+:root[data-theme='dark'] .verse-number { border-color: #4b4028; background: #30291d; color: #d3b575; }
+:root[data-theme='dark'] .verse-card[data-status='memorized'] .verse-number { border-color: #315f46; background: #18352a; color: #8fd0ae; }
+:root[data-theme='dark'] .verse-card[data-status='mastered'] .verse-number { border-color: #6a522c; background: #332c1e; color: #dfbd78; }
+:root[data-theme='dark'] .verse-card[data-status='learning'] .verse-number { border-color: #345762; background: #1e3036; color: #9ac5d0; }
+:root[data-theme='dark'] .verse-selection ion-select { border-color: #2b3a33; background: #202c26; color: #c1d0c7; }
+:root[data-theme='dark'] .verse-body,
+:root[data-theme='dark'] .review-verse { background: #131d18; }
+:root[data-theme='dark'] .verse-card[data-status='memorized'] .verse-body { background: #16261d; }
+:root[data-theme='dark'] .verse-card[data-status='mastered'] .verse-body { background: #262115; }
+:root[data-theme='dark'] .verse-card.needs-review { border-color: #6a512b; }
+:root[data-theme='dark'] .verse-divider::before,
+:root[data-theme='dark'] .verse-divider::after { background: #4b4432; }
+:root[data-theme='dark'] .verse-actions .record-button { --background: #1d3429; --color: #91cda7; }
+:root[data-theme='dark'] .recording-panel { border-color: #294c3a; background: #173026; }
+:root[data-theme='dark'] .recording-panel.is-recording { border-color: #5b342d; background: #34201d; }
+:root[data-theme='dark'] .recording-panel p { color: #b0c8b8; }
+:root[data-theme='dark'] .recording-panel.is-recording p { color: #e5a495; }
+:root[data-theme='dark'] .review-actions .remembered-button { --background: #1b382a; --color: #9ad2b1; }
+:root[data-theme='dark'] .review-actions .repeat-button { --background: #382b19; --color: #dfb570; }
+:root[data-theme='dark'] .settings-section-icon { background: #1d3127; color: #82bfa0; }
+:root[data-theme='dark'] .settings-section-icon.blue { background: #1e2e34; color: #92bdc8; }
+:root[data-theme='dark'] .reading-preview { border-color: #493d26; background: #262115; }
+:root[data-theme='dark'] .reading-preview::before { color: #8e784d; }
+:root[data-theme='dark'] .loading-state ion-spinner { color: #70bc92; }
+:root[data-theme='dark'] .theme-setting > ion-icon { color: #d2b475; }
+:root[data-theme='dark'] .bottom-navigation { border-color: #2a3932; background: rgb(19 29 24 / 96%); box-shadow: 0 -8px 30px rgb(0 0 0 / 24%); }
+:root[data-theme='dark'] .bottom-navigation a { color: #8fa399; }
+:root[data-theme='dark'] ion-app.with-navigation .bottom-navigation a.active { background: #1d3429; color: #a8d8ba; }
+:root[data-theme='dark'] .verse-text { color: var(--app-ink); }
+:root[data-theme='dark'] ion-button[fill='outline'] { --color: #8ccca6; --border-color: #3c6650; }
 
 @media (min-width: 720px) {
   .poem-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -40,6 +40,11 @@
           </div>
         </ion-card-header>
         <ion-card-content>
+          <ion-item class="settings-field theme-setting" lines="none">
+            <ion-icon name="moon-outline" slot="start" />
+            <ion-label>الوضع الداكن<small>قراءة مريحة في الإضاءة المنخفضة</small></ion-label>
+            <ion-toggle slot="end" [(ngModel)]="darkTheme" (ionChange)="setDarkTheme()" aria-label="تفعيل الوضع الداكن" />
+          </ion-item>
           <ion-item class="settings-field font-scale-field" lines="none"><ion-label>حجم الخط</ion-label><ion-range [min]="0.85" [max]="1.6" [step]="0.05" [(ngModel)]="fontScale" (ionChange)="setFontScale()" aria-label="حجم الخط" /></ion-item>
           <div class="reading-preview"><p class="verse-text">نَصٌّ عَرَبِيٌّ لِتَجْرِبَةِ حَجْمِ الخَطِّ</p></div>
           <ion-item class="settings-field" lines="none"><ion-label>الاحتفاظ بمحاولات التسجيل القديمة</ion-label><ion-toggle slot="end" [(ngModel)]="keepAttempts" (ionChange)="setKeepAttempts()" /></ion-item>

@@ -5,7 +5,7 @@ import { addIcons } from 'ionicons';
 import {
   addOutline, arrowBackOutline, arrowForwardOutline, bookOutline, bookmarkOutline, checkmarkCircleOutline,
   checkmarkDoneOutline, checkmarkOutline, chevronBackOutline, closeOutline, createOutline, downloadOutline,
-  folderOpenOutline, informationCircleOutline, libraryOutline, listOutline, micOutline, musicalNotesOutline,
+  folderOpenOutline, informationCircleOutline, libraryOutline, listOutline, micOutline, moonOutline, musicalNotesOutline,
   optionsOutline, pauseOutline, playBackOutline, playForwardOutline, playOutline, refreshOutline, repeatOutline,
   saveOutline, settingsOutline, shareOutline, shieldCheckmarkOutline, stopOutline, textOutline, timerOutline,
   trashOutline
@@ -33,7 +33,7 @@ export class App implements OnInit {
     addIcons({
       addOutline, arrowBackOutline, arrowForwardOutline, bookOutline, bookmarkOutline, checkmarkCircleOutline,
       checkmarkDoneOutline, checkmarkOutline, chevronBackOutline, closeOutline, createOutline, downloadOutline,
-      folderOpenOutline, informationCircleOutline, libraryOutline, listOutline, micOutline, musicalNotesOutline,
+      folderOpenOutline, informationCircleOutline, libraryOutline, listOutline, micOutline, moonOutline, musicalNotesOutline,
       optionsOutline, pauseOutline, playBackOutline, playForwardOutline, playOutline, refreshOutline, repeatOutline,
       saveOutline, settingsOutline, shareOutline, shieldCheckmarkOutline, stopOutline, textOutline, timerOutline,
       trashOutline
@@ -44,6 +44,8 @@ export class App implements OnInit {
     try {
       await this.db.init();
       await this.sync.seedDemo();
+      const darkTheme = await this.db.getSetting('dark_theme', false);
+      document.documentElement.dataset['theme'] = darkTheme ? 'dark' : 'light';
       const fontScale = await this.db.getSetting('font_scale', 1);
       document.documentElement.style.fontSize = `${fontScale * 100}%`;
       this.sync.startAutoSync();
