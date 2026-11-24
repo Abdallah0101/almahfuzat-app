@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastController } from '@ionic/angular';
@@ -18,6 +18,18 @@ export class LibraryPage implements OnInit {
   readonly items = signal<LibraryItem[]>([]);
   readonly sciences = signal<string[]>([]);
   readonly loading = signal(true);
+  readonly totals = computed(() => {
+    const items = this.items();
+    const verses = items.reduce((sum, item) => sum + item.poem.verses.length, 0);
+    const memorized = items.reduce((sum, item) => sum + item.memorized_count, 0);
+    const recorded = items.reduce((sum, item) => sum + item.recorded_count, 0);
+    return {
+      poems: items.length,
+      memorized,
+      recorded,
+      progress: verses ? Math.round(memorized * 100 / verses) : 0
+    };
+  });
   search = '';
   science = '';
   sort: 'title' | 'revision' = 'title';

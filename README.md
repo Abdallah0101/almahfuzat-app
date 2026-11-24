@@ -16,11 +16,11 @@ No GitHub account, API token, backend, or audio subscription is required.
 
 ## Working features
 
-- Arabic library search, science filters, memorization statistics, and adjustable font size.
+- Arabic library search, science filters, memorization statistics, adjustable font size, bottom navigation, and a visual progress dashboard.
 - Stable `(poem_id, verse_id)` identity for recordings and memorization state.
 - AAC/M4A recording per verse, preview, replacement, and optional recording history.
 - Media3 playlists with verse/group repeats, silence gaps, speed control, audio focus, and background playback.
-- WAV export using decoded PCM samples rather than binary file concatenation.
+- WAV export using decoded PCM samples rather than binary file concatenation. Exported audio is saved in the public `Download/AlMahfuzat` folder and shared through an Android content URI with read permission.
 - Daily review goals and simple spaced repetition.
 - Saved custom playlists and offline playback/export.
 - ZIP backup and non-destructive restore with per-file SHA-256 verification.

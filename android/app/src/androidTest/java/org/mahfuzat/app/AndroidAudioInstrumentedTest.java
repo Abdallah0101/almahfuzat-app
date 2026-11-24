@@ -10,8 +10,12 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.Until;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -89,6 +93,44 @@ public class AndroidAudioInstrumentedTest {
             assertEquals(1, header[22]);
             assertEquals(44100, littleEndianInt(header, 24));
             assertEquals(wav.length() - 44, littleEndianInt(header, 40));
+        }
+    }
+
+    @Test
+    public void publishesWavToDownloadsAndBuildsShareIntent() throws Exception {
+        if (Build.VERSION.SDK_INT < 29) {
+            InstrumentationRegistry.getInstrumentation().getUiAutomation().grantRuntimePermission(context.getPackageName(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        File source = new File(context.getCacheDir(), "public-export-source.wav");
+        byte[] content = "RIFF-test-WAVE-public-download".getBytes();
+        try (FileOutputStream output = new FileOutputStream(source)) { output.write(content); }
+        String outputName = "instrumented-public-" + System.currentTimeMillis() + ".wav";
+        PublicAudioExport.Publication publication = null;
+        try {
+            publication = PublicAudioExport.publish(context, source, outputName);
+            assertEquals("Download/AlMahfuzat/" + outputName, publication.displayPath);
+            assertEquals("content", publication.uri.getScheme());
+            try (InputStream input = context.getContentResolver().openInputStream(publication.uri)) {
+                byte[] restored = new byte[content.length];
+                assertEquals(content.length, input.read(restored));
+                assertEquals(new String(content), new String(restored));
+            }
+            Intent share = AudioPlugin.createShareIntent(context, publication.uri, "WAV test");
+            assertEquals(Intent.ACTION_SEND, share.getAction());
+            assertEquals("audio/wav", share.getType());
+            assertEquals(publication.uri, share.getParcelableExtra(Intent.EXTRA_STREAM));
+            assertTrue((share.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION) != 0);
+            Intent chooser = Intent.createChooser(share, "Share WAV test");
+            chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(chooser);
+            assertTrue("Android share sheet did not open", device.wait(Until.hasObject(By.pkg("com.android.intentresolver")), 5000));
+            device.pressBack();
+        } finally {
+            if (publication != null) {
+                if (Build.VERSION.SDK_INT >= 29) context.getContentResolver().delete(publication.uri, null, null);
+                else new File(publication.path).delete();
+            }
+            source.delete();
         }
     }
 

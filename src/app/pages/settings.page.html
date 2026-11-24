@@ -1,32 +1,70 @@
-<ion-header><ion-toolbar color="primary"><ion-buttons slot="start"><ion-button routerLink="/"><ion-icon name="arrow-back-outline" /></ion-button></ion-buttons><ion-title>الإعدادات</ion-title></ion-toolbar></ion-header>
+<ion-header class="app-header">
+  <ion-toolbar>
+    <ion-title><div class="header-title"><strong>الإعدادات</strong><small>تجربتك وبياناتك كما تفضّلها</small></div></ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content>
-  @if (busy()) { <ion-progress-bar type="indeterminate" /> }
-  <ion-card>
-    <ion-card-header><ion-card-title>مزامنة المحتوى العام</ion-card-title></ion-card-header>
-    <ion-card-content>
-      <ion-item><ion-label position="stacked">عنوان GitHub Pages</ion-label><ion-input [(ngModel)]="contentUrl" dir="ltr" type="url" /></ion-item>
-      <p class="muted">لا يحتاج التطبيق حساب GitHub أو أي رمز سري. آخر مزامنة ناجحة: {{ lastSync || 'لم تتم بعد' }}</p>
-      <ion-button (click)="saveUrl()">حفظ العنوان</ion-button>
-      <ion-button fill="outline" (click)="synchronize()"><ion-icon name="refresh-outline" /> مزامنة الآن</ion-button>
-    </ion-card-content>
-  </ion-card>
-  <ion-card>
-    <ion-card-header><ion-card-title>القراءة والتسجيل</ion-card-title></ion-card-header>
-    <ion-card-content>
-      <ion-item><ion-label>حجم الخط</ion-label><ion-range [min]="0.85" [max]="1.6" [step]="0.05" [(ngModel)]="fontScale" (ionChange)="setFontScale()" /></ion-item>
-      <p class="verse-text">نَصٌّ عَرَبِيٌّ لِتَجْرِبَةِ حَجْمِ الخَطِّ</p>
-      <ion-item><ion-label>الاحتفاظ بمحاولات التسجيل القديمة</ion-label><ion-toggle [(ngModel)]="keepAttempts" (ionChange)="setKeepAttempts()" /></ion-item>
-      <p class="muted">التسجيلات المؤرشفة المحفوظة بعد حذف أبياتها: {{ archivedCount() }}</p>
-      <ion-button fill="outline" (click)="resumeLast()">متابعة آخر استماع</ion-button>
-    </ion-card-content>
-  </ion-card>
-  <ion-card>
-    <ion-card-header><ion-card-title>النسخ الاحتياطي والاستعادة</ion-card-title></ion-card-header>
-    <ion-card-content>
-      <p>يشمل ZIP المنظومات المحلية وكل التسجيلات وحالات الحفظ والمراجعات والمجموعات والإعدادات. لا يُرسل أي ملف إلى الإنترنت.</p>
-      <ion-button (click)="createBackup()"><ion-icon name="save-outline" /> إنشاء نسخة كاملة</ion-button>
-      @if (backup()) { <ion-button fill="outline" (click)="shareBackup()"><ion-icon name="share-outline" /> مشاركة النسخة</ion-button> }
-      <ion-button fill="outline" (click)="restoreBackup()">استيراد نسخة على هذا الجهاز</ion-button>
-    </ion-card-content>
-  </ion-card>
+  <main class="page-shell">
+    <header class="page-intro">
+      <span class="section-kicker">مساحتك الخاصة</span>
+      <h1>اضبط تجربتك بعناية.</h1>
+      <p>تحكّم في المحتوى والقراءة والتسجيلات، واحتفظ بنسخة من بياناتك على جهازك.</p>
+    </header>
+
+    @if (busy()) { <ion-progress-bar type="indeterminate" aria-label="جارٍ تنفيذ العملية" /> }
+
+    <div class="settings-list">
+      <ion-card class="settings-card">
+        <ion-card-header>
+          <div class="settings-card-heading">
+            <span class="settings-section-icon"><ion-icon name="refresh-outline" /></span>
+            <div><ion-card-title>مزامنة المحتوى</ion-card-title><ion-card-subtitle>مصدر المتون والمنظومات العامة</ion-card-subtitle></div>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item class="settings-field" lines="none"><ion-label position="stacked">عنوان GitHub Pages</ion-label><ion-input [(ngModel)]="contentUrl" dir="ltr" type="url" /></ion-item>
+          <p class="settings-note"><ion-icon name="information-circle-outline" /><span>لا يحتاج التطبيق حساب GitHub أو أي رمز سرّي.<br>آخر مزامنة ناجحة: {{ lastSync || 'لم تتم بعد' }}</span></p>
+          <div class="settings-actions">
+            <ion-button (click)="saveUrl()"><ion-icon name="checkmark-outline" /> حفظ العنوان</ion-button>
+            <ion-button fill="outline" (click)="synchronize()"><ion-icon name="refresh-outline" /> مزامنة الآن</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="settings-card">
+        <ion-card-header>
+          <div class="settings-card-heading">
+            <span class="settings-section-icon gold"><ion-icon name="text-outline" /></span>
+            <div><ion-card-title>القراءة والتسجيل</ion-card-title><ion-card-subtitle>خصّص النص وطريقة حفظ التسجيلات</ion-card-subtitle></div>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item class="settings-field font-scale-field" lines="none"><ion-label>حجم الخط</ion-label><ion-range [min]="0.85" [max]="1.6" [step]="0.05" [(ngModel)]="fontScale" (ionChange)="setFontScale()" aria-label="حجم الخط" /></ion-item>
+          <div class="reading-preview"><p class="verse-text">نَصٌّ عَرَبِيٌّ لِتَجْرِبَةِ حَجْمِ الخَطِّ</p></div>
+          <ion-item class="settings-field" lines="none"><ion-label>الاحتفاظ بمحاولات التسجيل القديمة</ion-label><ion-toggle slot="end" [(ngModel)]="keepAttempts" (ionChange)="setKeepAttempts()" /></ion-item>
+          <p class="archived-note">التسجيلات المؤرشفة المحفوظة بعد حذف أبياتها: {{ archivedCount() }}</p>
+          <div class="settings-actions"><ion-button fill="outline" (click)="resumeLast()"><ion-icon name="play-outline" /> متابعة آخر استماع</ion-button></div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="settings-card backup-card">
+        <ion-card-header>
+          <div class="settings-card-heading">
+            <span class="settings-section-icon blue"><ion-icon name="shield-checkmark-outline" /></span>
+            <div><ion-card-title>النسخ الاحتياطي والاستعادة</ion-card-title><ion-card-subtitle>بياناتك ملكك، ومحفوظة تحت سيطرتك</ion-card-subtitle></div>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <p class="backup-description">يشمل ملف ZIP المنظومات المحلية وكل التسجيلات وحالات الحفظ والمراجعات والمجموعات والإعدادات.</p>
+          <div class="settings-actions">
+            <ion-button (click)="createBackup()"><ion-icon name="save-outline" /> إنشاء نسخة كاملة</ion-button>
+            @if (backup()) { <ion-button fill="outline" (click)="shareBackup()"><ion-icon name="share-outline" /> مشاركة النسخة</ion-button> }
+            <ion-button fill="outline" (click)="restoreBackup()"><ion-icon name="folder-open-outline" /> استيراد نسخة</ion-button>
+          </div>
+          <div class="privacy-note"><ion-icon name="shield-checkmark-outline" /> لا يُرسل أي ملف إلى الإنترنت؛ تبقى النسخة على جهازك.</div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </main>
 </ion-content>

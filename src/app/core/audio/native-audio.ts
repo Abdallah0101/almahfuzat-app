@@ -12,6 +12,7 @@ export interface RecordingResult {
 export interface ExportResult {
   path: string;
   url: string;
+  publicPath: string;
   sizeBytes: number;
   durationMs: number;
 }
@@ -33,6 +34,7 @@ export interface MahfuzatAudioPlugin {
   setSpeed(options: { speed: number }): Promise<void>;
   getPlaybackState(): Promise<PlaybackState>;
   exportWav(options: ExportOptions & { items: PlaybackQueueItem[] }): Promise<ExportResult>;
+  shareExport(options: { url: string; title: string; dialogTitle: string }): Promise<void>;
   addListener(event: 'playbackState', callback: (state: PlaybackState) => void): Promise<{ remove(): Promise<void> }>;
   addListener(event: 'exportProgress', callback: (progress: { percent: number; processedItems: number; totalItems: number }) => void): Promise<{ remove(): Promise<void> }>;
 }

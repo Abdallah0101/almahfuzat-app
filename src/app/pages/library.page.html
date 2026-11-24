@@ -1,52 +1,156 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>المحفوظات</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="synchronize()" aria-label="مزامنة الآن"><ion-icon name="refresh-outline" /></ion-button>
-      <ion-button routerLink="/settings" aria-label="الإعدادات"><ion-icon name="settings-outline" /></ion-button>
+<ion-header class="app-header library-header">
+  <ion-toolbar>
+    <ion-title>
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true">م</span>
+        <span class="brand-copy">
+          <strong>المحفوظات</strong>
+          <small>احفظ · راجع · أتقن</small>
+        </span>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end" class="header-actions">
+      <ion-button (click)="synchronize()" aria-label="مزامنة الآن" title="مزامنة المكتبة">
+        <ion-icon name="refresh-outline" />
+      </ion-button>
+      <ion-button routerLink="/settings" aria-label="الإعدادات" title="الإعدادات">
+        <ion-icon name="settings-outline" />
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)"><ion-refresher-content pulling-text="اسحب للمزامنة" refreshing-spinner="crescent" /></ion-refresher>
-  <nav class="toolbar-actions">
-    <ion-button fill="outline" size="small" routerLink="/review"><ion-icon name="bookmark-outline" /> مراجعة اليوم</ion-button>
-    <ion-button fill="outline" size="small" routerLink="/playlists"><ion-icon name="list-outline" /> مجموعاتي الصوتية</ion-button>
-  </nav>
-  <ion-searchbar [ngModel]="search" (ngModelChange)="search=$event; load()" placeholder="ابحث باسم المنظومة أو المؤلف" debounce="250" />
-  <div class="ion-padding-horizontal filters">
-    <ion-select [(ngModel)]="science" (ionChange)="load()" placeholder="كل العلوم" interface="popover" aria-label="التصفية حسب العلم">
-      <ion-select-option value="">كل العلوم</ion-select-option>
-      @for (value of sciences(); track value) { <ion-select-option [value]="value">{{ value }}</ion-select-option> }
-    </ion-select>
-    <ion-select [(ngModel)]="sort" (ionChange)="load()" interface="popover" aria-label="ترتيب المنظومات">
-      <ion-select-option value="title">أبجديًا</ion-select-option>
-      <ion-select-option value="revision">آخر مراجعة</ion-select-option>
-    </ion-select>
-  </div>
-  @if (sync.status | async; as status) {
-    @if (status.syncing) { <ion-progress-bar type="indeterminate" /> }
-    @if (status.lastError) { <ion-note color="danger" class="ion-padding">{{ status.lastError }}</ion-note> }
-  }
-  @if (loading()) { <ion-spinner class="empty-state" /> }
-  @for (item of items(); track item.poem.id) {
-    <ion-card [routerLink]="['/poem', item.poem.id]" button>
-      <ion-card-header>
-        <ion-card-title>{{ item.poem.title }}</ion-card-title>
-        <ion-card-subtitle>{{ item.poem.author }} · {{ item.poem.science }}</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        @if (!item.poem.is_complete) { <ion-badge color="warning">ما زالت تُضاف</ion-badge> }
-        <div class="stats">
-          <span>الأبيات: {{ item.poem.verses.length }}</span>
-          <span>المحفوظ: {{ item.memorized_count }}</span>
-          <span>المسجل: {{ item.recorded_count }}</span>
+
+<ion-content class="library-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content pulling-text="اسحب للمزامنة" refreshing-spinner="crescent" />
+  </ion-refresher>
+
+  <section class="library-hero-wrap">
+    <div class="library-hero">
+      <div class="hero-copy">
+        <span class="hero-kicker"><span></span> لوحة الحفظ والمراجعة</span>
+        <h1>واصل حفظك، خطوةٌ بعد خطوة.</h1>
+        <p>تابع تقدّمك، استمع إلى تسجيلاتك، واجعل لكل يوم نصيبًا من المراجعة.</p>
+      </div>
+      <span class="hero-seal" aria-hidden="true">م</span>
+
+      <div class="hero-dashboard">
+        <div class="hero-progress-ring" [style.--progress]="totals().progress">
+          <div><strong>{{ totals().progress }}<small>%</small></strong><span>من الأبيات محفوظة</span></div>
         </div>
-        <ion-progress-bar [value]="item.progress_percent / 100" aria-label="نسبة الحفظ" />
-        <ion-note>نسبة الحفظ {{ item.progress_percent }}%</ion-note>
-      </ion-card-content>
-    </ion-card>
-  } @empty {
-    @if (!loading()) { <div class="empty-state">لا توجد منظومات مطابقة. استخدم المزامنة أو غيّر البحث.</div> }
-  }
+        <div class="hero-metrics">
+          <div><strong>{{ totals().memorized }}</strong><span>بيت محفوظ</span></div>
+          <div><strong>{{ totals().recorded }}</strong><span>تسجيل صوتي</span></div>
+          <div><strong>{{ totals().poems }}</strong><span>منظومات</span></div>
+        </div>
+        <a class="hero-review-button" routerLink="/review">
+          <ion-icon name="bookmark-outline" />
+          <span>ابدأ مراجعة اليوم</span>
+          <ion-icon name="chevron-back-outline" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <main class="page-shell library-body">
+    <section class="library-controls" aria-label="البحث والتصفية">
+      <ion-searchbar
+        class="custom-search"
+        [ngModel]="search"
+        (ngModelChange)="search=$event; load()"
+        placeholder="ابحث عن منظومة أو مؤلف..."
+        debounce="250"
+        aria-label="البحث في المكتبة" />
+      <div class="filter-row">
+        <label class="filter-control">
+          <span><ion-icon name="library-outline" /> العلم</span>
+          <ion-select [(ngModel)]="science" (ionChange)="load()" placeholder="كل العلوم" interface="popover" aria-label="التصفية حسب العلم">
+            <ion-select-option value="">كل العلوم</ion-select-option>
+            @for (value of sciences(); track value) {
+              <ion-select-option [value]="value">{{ value }}</ion-select-option>
+            }
+          </ion-select>
+        </label>
+        <label class="filter-control">
+          <span><ion-icon name="options-outline" /> الترتيب</span>
+          <ion-select [(ngModel)]="sort" (ionChange)="load()" interface="popover" aria-label="ترتيب المنظومات">
+            <ion-select-option value="title">أبجديًا</ion-select-option>
+            <ion-select-option value="revision">آخر مراجعة</ion-select-option>
+          </ion-select>
+        </label>
+      </div>
+    </section>
+
+    @if (sync.status | async; as status) {
+      @if (status.syncing) {
+        <div class="sync-status"><ion-progress-bar type="indeterminate" /><span>جارٍ التحقق من تحديثات المكتبة…</span></div>
+      }
+      @if (status.lastError) {
+        <ion-note color="danger" class="sync-error">{{ status.lastError }}</ion-note>
+      }
+    }
+
+    <div class="section-heading library-heading">
+      <div>
+        <span class="section-kicker">مجموعتك</span>
+        <h2>المتون والمنظومات</h2>
+      </div>
+      @if (!loading()) { <span class="count-badge">{{ items().length }}</span> }
+    </div>
+
+    @if (loading()) {
+      <div class="loading-state"><ion-spinner name="crescent" /><span>نجهّز مكتبتك…</span></div>
+    }
+
+    <div class="poem-list">
+      @for (item of items(); track item.poem.id) {
+        <ion-card class="poem-card" [routerLink]="['/poem', item.poem.id]" button>
+          <ion-card-header>
+            <div class="poem-card-heading">
+              <span class="poem-symbol" aria-hidden="true"><ion-icon name="book-outline" /></span>
+              <div class="poem-heading-copy">
+                <ion-card-subtitle>{{ item.poem.science }}</ion-card-subtitle>
+                <ion-card-title>{{ item.poem.title }}</ion-card-title>
+              </div>
+              <ion-icon class="poem-card-arrow" name="chevron-back-outline" />
+            </div>
+            <p class="poem-author">{{ item.poem.author }}</p>
+            @if (!item.poem.is_complete) { <ion-badge color="warning" class="incomplete-badge">ما زالت تُضاف</ion-badge> }
+          </ion-card-header>
+          <ion-card-content>
+            <div class="poem-stats">
+              <div class="poem-stat">
+                <strong>{{ item.poem.verses.length }}</strong>
+                <span>الأبيات</span>
+              </div>
+              <div class="poem-stat">
+                <strong>{{ item.memorized_count }}</strong>
+                <span>المحفوظ</span>
+              </div>
+              <div class="poem-stat">
+                <strong>{{ item.recorded_count }}</strong>
+                <span>المسجّل</span>
+              </div>
+            </div>
+            <div class="poem-progress">
+              <div class="progress-meta">
+                <span>نسبة الحفظ</span>
+                <strong>{{ item.progress_percent }}<small>%</small></strong>
+              </div>
+              <ion-progress-bar [value]="item.progress_percent / 100" aria-label="نسبة الحفظ" />
+            </div>
+          </ion-card-content>
+        </ion-card>
+      } @empty {
+        @if (!loading()) {
+          <div class="empty-state">
+            <span class="empty-state-icon"><ion-icon name="library-outline" /></span>
+            <h2>مكتبتك بانتظار الاختيار</h2>
+            <p>لا توجد منظومات مطابقة. جرّب بحثًا آخر أو زامن المكتبة للحصول على أحدث المحتوى.</p>
+            <ion-button fill="outline" (click)="synchronize()"><ion-icon name="refresh-outline" /> تحديث المكتبة</ion-button>
+          </div>
+        }
+      }
+    </div>
+  </main>
 </ion-content>

@@ -216,7 +216,7 @@ export class PoemPage implements OnInit {
     const result = await this.guard(() => this.exporter.export(items, { ...this.settings, outputName: name }));
     if (!result) return;
     this.lastExport.set(result);
-    await this.toast(`اكتمل ملف WAV (${(result.sizeBytes / 1048576).toFixed(1)} ميغابايت).`);
+    await this.toast(`تم حفظ الملف في ${result.publicPath} (${(result.sizeBytes / 1048576).toFixed(1)} ميغابايت).`);
   }
 
   estimatedBytes(): number {

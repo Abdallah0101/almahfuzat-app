@@ -1,7 +1,27 @@
-<ion-app dir="rtl">
+<ion-app dir="rtl" [class.with-navigation]="showNavigation()">
   @if (error()) {
     <ion-note color="danger" class="startup-error">تعذر تهيئة التطبيق: {{ error() }}</ion-note>
   }
   <ion-router-outlet />
   <app-player-bar />
+  @if (showNavigation()) {
+    <nav class="bottom-navigation" aria-label="التنقل الرئيسي">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <ion-icon name="library-outline" />
+        <span>المكتبة</span>
+      </a>
+      <a routerLink="/review" routerLinkActive="active">
+        <ion-icon name="bookmark-outline" />
+        <span>المراجعة</span>
+      </a>
+      <a routerLink="/playlists" routerLinkActive="active">
+        <ion-icon name="musical-notes-outline" />
+        <span>المجموعات</span>
+      </a>
+      <a routerLink="/settings" routerLinkActive="active">
+        <ion-icon name="settings-outline" />
+        <span>الإعدادات</span>
+      </a>
+    </nav>
+  }
 </ion-app>

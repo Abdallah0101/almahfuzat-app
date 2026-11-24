@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Share } from '@capacitor/share';
 import { BehaviorSubject } from 'rxjs';
 import { ExportOptions, PlaybackQueueItem } from '../models';
 import { ExportResult, NativeAudio } from './native-audio';
@@ -26,6 +25,6 @@ export class ExportService {
   }
 
   async share(result: ExportResult): Promise<void> {
-    await Share.share({ title: 'تصدير تسجيلات المحفوظات', files: [result.url] });
+    await NativeAudio.shareExport({ url: result.url, title: 'تصدير تسجيلات المحفوظات', dialogTitle: 'مشاركة الملف الصوتي' });
   }
 }

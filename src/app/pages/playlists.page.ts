@@ -44,6 +44,7 @@ export class PlaylistsPage implements OnInit {
     if (!items.length) { await this.show('لا توجد تسجيلات حالية لهذه المجموعة.'); return; }
     try {
       const result = await this.exporter.export(items, { ...playlist.settings, outputName: `${playlist.name}.wav` });
+      await this.show(`تم حفظ الملف في ${result.publicPath}.`);
       await this.exporter.share(result);
     } catch (error) { await this.show(error instanceof Error ? error.message : String(error)); }
   }

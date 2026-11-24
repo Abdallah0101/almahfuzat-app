@@ -1,17 +1,66 @@
-<ion-header><ion-toolbar color="primary"><ion-buttons slot="start"><ion-button routerLink="/"><ion-icon name="arrow-back-outline" /></ion-button></ion-buttons><ion-title>مجموعاتي الصوتية</ion-title></ion-toolbar></ion-header>
+<ion-header class="app-header">
+  <ion-toolbar>
+    <ion-title><div class="header-title"><strong>مجموعاتي الصوتية</strong><small>مختاراتك للاستماع والمراجعة</small></div></ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content>
-  @if (exporter.progress | async; as progress) { @if (progress.active) { <ion-progress-bar [value]="progress.percent / 100" /><p class="ion-padding">إنشاء الملف: {{ progress.percent }}%</p> } }
-  @for (playlist of playlists(); track playlist.id) {
-    <ion-card>
-      <ion-card-header><ion-card-title>{{ playlist.name }}</ion-card-title><ion-card-subtitle>{{ titles.get(playlist.poem_id) }} · {{ playlist.verse_ids.length }} بيت</ion-card-subtitle></ion-card-header>
-      <ion-card-content>
-        <p>تكرار البيت {{ playlist.settings.verseRepeats }} · تكرار المجموعة {{ playlist.settings.groupRepeats }} · فاصل {{ playlist.settings.gapSeconds }}ث</p>
-        <div class="toolbar-actions">
-          <ion-button size="small" (click)="play(playlist)"><ion-icon name="play-outline" /> تشغيل</ion-button>
-          <ion-button size="small" fill="outline" (click)="export(playlist)"><ion-icon name="share-outline" /> تصدير ومشاركة</ion-button>
-          <ion-button size="small" fill="clear" color="danger" (click)="remove(playlist)"><ion-icon name="trash-outline" /> حذف</ion-button>
+  <main class="page-shell">
+    <header class="page-intro">
+      <span class="section-kicker">استمع بطريقتك</span>
+      <h1>مختارات تجمع ما تريد إتقانه.</h1>
+      <p>أنشئ جلسات استماع من أبياتك المسجّلة، واضبط التكرار والفواصل بما يناسب مراجعتك.</p>
+    </header>
+
+    @if (exporter.progress | async; as progress) {
+      @if (progress.active) {
+        <div class="export-banner">
+          <ion-icon name="download-outline" />
+          <div><strong>جارٍ إنشاء الملف الصوتي</strong><ion-progress-bar [value]="progress.percent / 100" /></div>
+          <span>{{ progress.percent }}%</span>
         </div>
-      </ion-card-content>
-    </ion-card>
-  } @empty { <div class="empty-state">احفظ مجموعة من صفحة أي منظومة بعد تحديد الأبيات.</div> }
+      }
+    }
+
+    <div class="section-heading">
+      <div><span class="section-kicker">محفوظة على جهازك</span><h2>المجموعات الصوتية</h2></div>
+      <span class="count-badge">{{ playlists().length }}</span>
+    </div>
+
+    <div class="playlist-list">
+      @for (playlist of playlists(); track playlist.id) {
+        <ion-card class="playlist-card">
+          <ion-card-header>
+            <div class="playlist-heading">
+              <span class="playlist-icon"><ion-icon name="musical-notes-outline" /></span>
+              <div class="playlist-heading-copy">
+                <ion-card-title>{{ playlist.name }}</ion-card-title>
+                <ion-card-subtitle>{{ titles.get(playlist.poem_id) }}</ion-card-subtitle>
+              </div>
+              <span class="playlist-count">{{ playlist.verse_ids.length }} بيت</span>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="playlist-settings">
+              <span class="playlist-setting"><ion-icon name="repeat-outline" /> تكرار البيت {{ playlist.settings.verseRepeats }}×</span>
+              <span class="playlist-setting"><ion-icon name="list-outline" /> تكرار المجموعة {{ playlist.settings.groupRepeats }}×</span>
+              <span class="playlist-setting"><ion-icon name="timer-outline" /> فاصل {{ playlist.settings.gapSeconds }} ث</span>
+            </div>
+            <div class="playlist-actions">
+              <ion-button size="small" (click)="play(playlist)"><ion-icon name="play-outline" /> تشغيل المجموعة</ion-button>
+              <ion-button size="small" fill="outline" (click)="export(playlist)"><ion-icon name="share-outline" /> تصدير ومشاركة</ion-button>
+              <ion-button class="delete-button" size="small" fill="clear" color="danger" (click)="remove(playlist)" aria-label="حذف المجموعة"><ion-icon name="trash-outline" /> حذف</ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      } @empty {
+        <div class="empty-state">
+          <span class="empty-state-icon"><ion-icon name="musical-notes-outline" /></span>
+          <h2>اصنع مجموعتك الأولى</h2>
+          <p>حدّد أبياتك المسجّلة من صفحة أي منظومة، ثم احفظها كمجموعة صوتية للاستماع إليها هنا.</p>
+          <ion-button routerLink="/"><ion-icon name="library-outline" /> استكشف المكتبة</ion-button>
+        </div>
+      }
+    </div>
+  </main>
 </ion-content>

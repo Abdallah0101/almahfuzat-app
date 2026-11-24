@@ -1,12 +1,16 @@
 package org.mahfuzat.app;
 
 import android.Manifest;
+import android.content.ClipData;
+import android.content.Context;
+import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import androidx.core.content.FileProvider;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.PermissionState;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -23,7 +27,8 @@ import org.json.JSONObject;
     name = "MahfuzatAudio",
     permissions = {
         @Permission(alias = "microphone", strings = {Manifest.permission.RECORD_AUDIO}),
-        @Permission(alias = "notifications", strings = {Manifest.permission.POST_NOTIFICATIONS})
+        @Permission(alias = "notifications", strings = {Manifest.permission.POST_NOTIFICATIONS}),
+        @Permission(alias = "storage", strings = {Manifest.permission.WRITE_EXTERNAL_STORAGE})
     }
 )
 public class AudioPlugin extends Plugin {
@@ -192,6 +197,10 @@ public class AudioPlugin extends Plugin {
 
     @PluginMethod
     public void exportWav(PluginCall call) {
+        if (Build.VERSION.SDK_INT < 29 && getPermissionState("storage") != PermissionState.GRANTED) {
+            requestPermissionForAlias("storage", call, "storagePermissionResult");
+            return;
+        }
         exportExecutor.execute(() -> {
             File temporary = null;
             try {
@@ -201,13 +210,7 @@ public class AudioPlugin extends Plugin {
                 }
                 File directory = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC), "exports");
                 if (!directory.mkdirs() && !directory.isDirectory()) throw new IllegalStateException("Cannot create export directory");
-                File output = new File(directory, outputName);
-                int suffix = 2;
-                while (output.exists()) {
-                    output = new File(directory, outputName.replace(".wav", "-" + suffix + ".wav"));
-                    suffix++;
-                }
-                temporary = new File(directory, output.getName() + ".tmp");
+                temporary = File.createTempFile("mahfuzat-", ".wav.tmp", directory);
                 WavExporter.Result exported = new WavExporter(getContext()).export(call.getData(), temporary,
                     (percent, processed, total) -> {
                         JSObject progress = new JSObject();
@@ -216,17 +219,59 @@ public class AudioPlugin extends Plugin {
                         progress.put("totalItems", total);
                         notifyListeners("exportProgress", progress);
                     });
-                if (!temporary.renameTo(output)) throw new IllegalStateException("Could not finalize WAV file");
+                long sizeBytes = temporary.length();
+                PublicAudioExport.Publication publication = PublicAudioExport.publish(getContext(), temporary, outputName);
                 JSObject result = new JSObject();
-                result.put("path", output.getAbsolutePath());
-                result.put("url", FileProvider.getUriForFile(getContext(), getContext().getPackageName() + ".fileprovider", output).toString());
-                result.put("sizeBytes", output.length());
+                result.put("path", publication.path);
+                result.put("url", publication.uri.toString());
+                result.put("publicPath", publication.displayPath);
+                result.put("sizeBytes", sizeBytes);
                 result.put("durationMs", exported.durationMs);
                 call.resolve(result);
             } catch (Exception error) {
-                if (temporary != null) temporary.delete();
                 call.reject("WAV export failed: " + error.getMessage(), error);
+            } finally {
+                if (temporary != null) temporary.delete();
             }
         });
+    }
+
+    @PermissionCallback
+    private void storagePermissionResult(PluginCall call) {
+        if (getPermissionState("storage") == PermissionState.GRANTED) exportWav(call);
+        else call.reject("Storage permission is required to save audio in Download/AlMahfuzat");
+    }
+
+    @PluginMethod
+    public void shareExport(PluginCall call) {
+        String value = call.getString("url");
+        if (value == null) {
+            call.reject("Missing audio URI");
+            return;
+        }
+        Uri uri = Uri.parse(value);
+        if (!"content".equals(uri.getScheme())) {
+            call.reject("Unsupported audio URI");
+            return;
+        }
+        try {
+            String title = call.getString("title", "AlMahfuzat WAV");
+            Intent intent = createShareIntent(getContext(), uri, title);
+            Intent chooser = Intent.createChooser(intent, call.getString("dialogTitle", "مشاركة الملف الصوتي"));
+            getActivity().startActivity(chooser);
+            call.resolve();
+        } catch (Exception error) {
+            call.reject("Could not share WAV: " + error.getMessage(), error);
+        }
+    }
+
+    static Intent createShareIntent(Context context, Uri uri, String title) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("audio/wav");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.putExtra(Intent.EXTRA_SUBJECT, title);
+        intent.setClipData(ClipData.newUri(context.getContentResolver(), "AlMahfuzat WAV", uri));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        return intent;
     }
 }

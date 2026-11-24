@@ -28,13 +28,13 @@ Playback and export tests can run with airplane mode enabled to verify offline b
 - SHA-256 mismatch rejection without damaging the previous catalog.
 - Recording replacement with and without history retention.
 - Backup restore into a fresh database, idempotency, and conflict handling.
-- Native AAC recording, sequential Media3 playback, repeats, background/screen-off playback, WAV export, and ZIP restore.
+- Native AAC recording, sequential Media3 playback, repeats, background/screen-off playback, WAV export to public Downloads, share intent permissions, and ZIP restore.
 
 ## Verified results on 2026-11-23
 
 - All 14 app unit/integration tests passed.
 - All 5 content repository tests passed.
-- Three Android instrumentation tests passed on Pixel 4 API 34 with airplane mode and Wi-Fi disabled.
+- Four Android instrumentation tests passed on Pixel 4 API 34, including public WAV publication in `Download/AlMahfuzat`, exported-byte verification, share intent permissions, and a real Android share-sheet launch.
 - Library and poem screens were opened on Android, including hemistichs and recording controls.
 - The Save crash was reproduced in 1.0.1: `FilesystemPlugin.mkdir` failed with `NoClassDefFoundError` for Kotlin `SpillingKt` because the build forced Kotlin 1.8.22.
 - The dependency fix preserves Kotlin 2.2.20. The complete record, stop, and Save flow was repeated successfully in 1.0.2: directory creation, file rename, and transactional SQLite insert completed without closing the app.

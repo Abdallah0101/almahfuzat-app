@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { AlertController, ToastController } from '@ionic/angular';
 import { IONIC_COMPONENTS } from '../ionic.imports';
@@ -11,7 +10,7 @@ import { PlayerService } from '../core/audio/player.service';
 import { SyncService } from '../core/content/sync.service';
 import { DatabaseService } from '../core/database/database.service';
 
-@Component({ selector: 'app-settings', imports: [CommonModule, FormsModule, ...IONIC_COMPONENTS, RouterLink], templateUrl: './settings.page.html' })
+@Component({ selector: 'app-settings', imports: [CommonModule, FormsModule, ...IONIC_COMPONENTS], templateUrl: './settings.page.html' })
 export class SettingsPage implements OnInit {
   contentUrl = '';
   fontScale = 1;
