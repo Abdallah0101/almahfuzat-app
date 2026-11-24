@@ -19,7 +19,7 @@ export interface ExportResult {
 
 export interface MahfuzatAudioPlugin {
   checkPermissions(): Promise<{ microphone: 'granted' | 'denied' | 'prompt' }>;
-  requestPermissions(): Promise<{ microphone: 'granted' | 'denied' | 'prompt' }>;
+  requestPermissions(options?: { permissions: string[] }): Promise<{ microphone: 'granted' | 'denied' | 'prompt' }>;
   requestNotifications(): Promise<void>;
   startRecording(options: { relativePath: string }): Promise<void>;
   stopRecording(): Promise<RecordingResult>;

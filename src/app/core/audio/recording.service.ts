@@ -21,7 +21,7 @@ export class RecordingService {
 
   async start(verse: VerseView): Promise<void> {
     if (this.session.value) throw new Error('أنهِ التسجيل الحالي أو ألغِه أولًا.');
-    const permission = await NativeAudio.requestPermissions();
+    const permission = await NativeAudio.requestPermissions({ permissions: ['microphone'] });
     if (permission.microphone !== 'granted') throw new Error('يلزم إذن الميكروفون لتسجيل البيت.');
     const pendingPath = `recordings/.pending/${newId('attempt')}.m4a`;
     await NativeAudio.startRecording({ relativePath: pendingPath });

@@ -10,9 +10,7 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.Until;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -123,7 +121,7 @@ public class AndroidAudioInstrumentedTest {
             Intent chooser = Intent.createChooser(share, "Share WAV test");
             chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(chooser);
-            assertTrue("Android share sheet did not open", device.wait(Until.hasObject(By.pkg("com.android.intentresolver")), 5000));
+            assertTrue("Android share sheet did not open", waitForShareSheet());
             device.pressBack();
         } finally {
             if (publication != null) {
@@ -132,6 +130,16 @@ public class AndroidAudioInstrumentedTest {
             }
             source.delete();
         }
+    }
+
+    private boolean waitForShareSheet() throws Exception {
+        long deadline = System.currentTimeMillis() + 10_000;
+        while (System.currentTimeMillis() < deadline) {
+            String windows = device.executeShellCommand("dumpsys window");
+            if (windows.matches("(?s).*mCurrentFocus=.*com\\.android\\.intentresolver/\\.ChooserActivity.*")) return true;
+            Thread.sleep(200);
+        }
+        return false;
     }
 
     private void record(File file, long durationMs) throws Exception {
