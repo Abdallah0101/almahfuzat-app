@@ -1,38 +1,46 @@
 import '@angular/compiler';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SettingsPage } from '../src/app/pages/settings.page';
 
 vi.stubGlobal('document', { documentElement: { dataset: {}, style: { setProperty: vi.fn() } } });
 
 describe('display settings', () => {
-  afterEach(() => { vi.restoreAllMocks(); });
+  beforeEach(() => { vi.clearAllMocks(); });
 
-  it('applies the selected theme and persists it on the device', async () => {
+  it('previews and explicitly saves all display preferences', async () => {
     const page = Object.create(SettingsPage.prototype) as SettingsPage;
     const db = { setSetting: vi.fn().mockResolvedValue(undefined) };
-    Object.assign(page, { db });
+    const toast = { present: vi.fn().mockResolvedValue(undefined) };
+    Object.assign(page, { db, toasts: { create: vi.fn().mockResolvedValue(toast) } });
     page.darkTheme = true;
-    await page.setDarkTheme();
-    expect(document.documentElement.dataset['theme']).toBe('dark');
-    expect(db.setSetting).toHaveBeenCalledWith('dark_theme', true);
+    page.fontScale = 1;
+    page.verseFontScale = 1.3;
+    await page.saveDisplaySettings();
 
-    page.darkTheme = false;
-    await page.setDarkTheme();
-    expect(document.documentElement.dataset['theme']).toBe('light');
-    expect(db.setSetting).toHaveBeenCalledWith('dark_theme', false);
+    expect(document.documentElement.dataset['theme']).toBe('dark');
+    expect(document.documentElement.style.fontSize).toBe('100%');
+    expect(document.documentElement.style.setProperty).toHaveBeenCalledWith('--verse-font-size-default', '2.002rem');
+    expect(db.setSetting).toHaveBeenCalledWith('dark_theme', true);
+    expect(db.setSetting).toHaveBeenCalledWith('font_scale', 1);
+    expect(db.setSetting).toHaveBeenCalledWith('verse_font_scale', 1.3);
+    expect(toast.present).toHaveBeenCalledOnce();
   });
 
-  it('applies and persists a dedicated verse font scale', async () => {
+  it('keeps button adjustments unsaved until the save action', async () => {
     const page = Object.create(SettingsPage.prototype) as SettingsPage;
     const db = { setSetting: vi.fn().mockResolvedValue(undefined) };
-    Object.assign(page, { db });
-    page.verseFontScale = 1.3;
-    await page.setVerseFontScale();
-    expect(document.documentElement.style.setProperty).toHaveBeenCalledWith('--verse-font-scale', '1.3');
-    expect(db.setSetting).toHaveBeenCalledWith('verse_font_scale', 1.3);
-
-    page.verseFontScale = 2.1;
-    await page.setVerseFontScale();
+    Object.assign(page, {
+      db,
+      darkTheme: false,
+      fontScale: 1,
+      verseFontScale: 1.95,
+      toasts: { create: vi.fn().mockResolvedValue({ present: vi.fn() }) }
+    });
+    page.adjustVerseFontScale(0.05);
     expect(page.verseFontScale).toBe(2);
+    expect(db.setSetting).not.toHaveBeenCalled();
+
+    await page.saveDisplaySettings();
+    expect(db.setSetting).toHaveBeenCalledWith('verse_font_scale', 2);
   });
 });

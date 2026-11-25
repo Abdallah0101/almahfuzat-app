@@ -54,7 +54,10 @@
   --ion-color-medium-shade: #5c6962;
   --ion-color-medium-tint: #77857d;
   --font-scale: 1;
-  --verse-font-scale: 1.15;
+  --verse-font-size-default: 1.771rem;
+  --verse-font-size-review: 1.6445rem;
+  --verse-font-size-preview: 1.5525rem;
+  --verse-font-size-mobile: 1.6675rem;
 }
 
 html { font-size: 100%; }
@@ -417,7 +420,8 @@ a { color: inherit; text-decoration: none; }
 .verse-selection ion-select { max-width: 145px; min-height: 34px; padding: 4px 9px; border: 1px solid #e5e9e3; border-radius: 9px; background: #f6f8f5; color: #51685b; font-size: .69rem; }
 .changed-text-badge { margin: 0 17px 10px; }
 .verse-body { position: relative; margin: 0 17px; padding: 20px 18px; border-radius: 15px; background: linear-gradient(135deg, #f8f7f2, #f5f6f1); text-align: center; }
-.verse-text { --verse-base-size: 1.54rem; margin: 0; color: #203b32; font-family: var(--app-font-display); font-size: calc(var(--verse-base-size) * var(--verse-font-scale)); line-height: 2.05; white-space: pre-wrap; text-align: center; }
+.verse-text { margin: 0; color: #203b32; font-family: var(--app-font-display); font-size: var(--verse-font-size-default); line-height: 2.05; white-space: pre-wrap; text-align: center; }
+.verse-card .verse-text { font-size: var(--verse-font-size-default); }
 .verse-divider { display: flex; align-items: center; justify-content: center; gap: 8px; width: 75px; margin: 4px auto; }
 .verse-divider::before,
 .verse-divider::after { width: 25px; height: 1px; background: #ded8ca; content: ''; }
@@ -460,7 +464,7 @@ a { color: inherit; text-decoration: none; }
 .review-poem span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .review-count { flex: 0 0 auto; color: #8a948e; font-size: .61rem; }
 .review-verse { margin: 14px 0 12px; padding: 17px 15px; border-radius: 14px; background: #f7f7f2; }
-.review-verse .verse-text { --verse-base-size: 1.43rem; }
+.review-verse .verse-text { font-size: var(--verse-font-size-review); }
 .review-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .review-number { color: #89948d; font-size: .63rem; }
 .review-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
@@ -521,7 +525,8 @@ a { color: inherit; text-decoration: none; }
 .font-adjust { width: 39px; min-width: 39px; height: 36px; min-height: 36px; margin: 0; font-size: 1.1rem; }
 .reading-preview { position: relative; overflow: hidden; margin: 15px 0 12px; padding: 17px; border: 1px solid #e8e0d1; border-radius: 14px; background: #f8f4eb; }
 .reading-preview::before { position: absolute; top: 9px; right: 11px; color: #d9c9aa; content: '﴾'; font-family: var(--app-font-display); font-size: 1.3rem; }
-.reading-preview .verse-text { --verse-base-size: 1.35rem; }
+.reading-preview .verse-text { font-size: var(--verse-font-size-preview); }
+.save-display-button { margin: 0 0 12px; }
 .archived-note { margin: 12px 0 0; color: var(--app-ink-soft); font-size: .66rem; line-height: 1.8; }
 .backup-description { margin: 4px 0 0; color: var(--app-ink-soft); font-size: .7rem; line-height: 1.9; }
 .privacy-note { display: flex; align-items: center; gap: 7px; margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: #edf3ee; color: #527060; font-size: .64rem; }
@@ -677,7 +682,7 @@ ion-card { background: var(--app-surface); }
   .verse-selection { gap: 4px; }
   .verse-selection ion-select { max-width: 126px; font-size: .66rem; }
   .verse-body { margin-inline: 12px; padding: 17px 10px; }
-  .verse-text { --verse-base-size: 1.45rem; }
+  .verse-card .verse-text { font-size: var(--verse-font-size-mobile); }
   .verse-actions { padding: 11px 12px 13px; }
   .recording-panel { margin-inline: 12px; }
   .goal-card { padding: 20px 16px; }

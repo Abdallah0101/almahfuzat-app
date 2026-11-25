@@ -43,9 +43,9 @@
           <ion-item class="settings-field theme-setting" lines="none">
             <ion-icon name="moon-outline" slot="start" />
             <ion-label>الوضع الداكن<small>قراءة مريحة في الإضاءة المنخفضة</small></ion-label>
-            <ion-toggle slot="end" [(ngModel)]="darkTheme" (ionChange)="setDarkTheme()" aria-label="تفعيل الوضع الداكن" />
+            <ion-toggle slot="end" [(ngModel)]="darkTheme" (ionChange)="previewDisplaySettings()" aria-label="تفعيل الوضع الداكن" />
           </ion-item>
-          <ion-item class="settings-field font-scale-field" lines="none"><ion-label>حجم واجهة التطبيق</ion-label><ion-range [min]="0.85" [max]="1.6" [step]="0.05" [(ngModel)]="fontScale" (ionChange)="setFontScale()" aria-label="حجم واجهة التطبيق" /></ion-item>
+          <ion-item class="settings-field font-scale-field" lines="none"><ion-label>حجم واجهة التطبيق</ion-label><ion-range [min]="0.85" [max]="1.6" [step]="0.05" [(ngModel)]="fontScale" (ionChange)="previewDisplaySettings()" aria-label="حجم واجهة التطبيق" /></ion-item>
           <div class="verse-font-panel">
             <div class="font-control-heading">
               <span><ion-icon name="text-outline" /> حجم خط الآيات</span>
@@ -53,11 +53,12 @@
             </div>
             <div class="font-control-row">
               <ion-button class="font-adjust" fill="outline" (click)="adjustVerseFontScale(-0.05)" [disabled]="verseFontScale <= 0.85" aria-label="تصغير خط الآيات">−</ion-button>
-              <ion-range [min]="0.85" [max]="2" [step]="0.05" [(ngModel)]="verseFontScale" (ionChange)="setVerseFontScale()" aria-label="حجم خط الآيات" />
+              <ion-range [min]="0.85" [max]="2" [step]="0.05" [(ngModel)]="verseFontScale" (ionChange)="previewDisplaySettings()" aria-label="حجم خط الآيات" />
               <ion-button class="font-adjust" fill="outline" (click)="adjustVerseFontScale(0.05)" [disabled]="verseFontScale >= 2" aria-label="تكبير خط الآيات">+</ion-button>
             </div>
           </div>
           <div class="reading-preview"><p class="verse-text">نَصٌّ عَرَبِيٌّ لِتَجْرِبَةِ حَجْمِ الخَطِّ</p></div>
+          <ion-button expand="block" class="save-display-button" (click)="saveDisplaySettings()"><ion-icon name="checkmark-outline" /> حفظ إعدادات العرض</ion-button>
           <ion-item class="settings-field" lines="none"><ion-label>الاحتفاظ بمحاولات التسجيل القديمة</ion-label><ion-toggle slot="end" [(ngModel)]="keepAttempts" (ionChange)="setKeepAttempts()" /></ion-item>
           <p class="archived-note">التسجيلات المؤرشفة المحفوظة بعد حذف أبياتها: {{ archivedCount() }}</p>
           <div class="settings-actions"><ion-button fill="outline" (click)="resumeLast()"><ion-icon name="play-outline" /> متابعة آخر استماع</ion-button></div>

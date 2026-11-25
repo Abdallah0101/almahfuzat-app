@@ -13,6 +13,7 @@ import {
 import { DatabaseService } from './core/database/database.service';
 import { SyncService } from './core/content/sync.service';
 import { PlayerBarComponent } from './components/player-bar.component';
+import { applyDisplayPreferences } from './core/display.utils';
 
 @Component({
   selector: 'app-root',
@@ -49,9 +50,7 @@ export class App implements OnInit {
         this.db.getSetting('font_scale', 1),
         this.db.getSetting('verse_font_scale', 1.15)
       ]);
-      document.documentElement.dataset['theme'] = darkTheme ? 'dark' : 'light';
-      document.documentElement.style.fontSize = `${fontScale * 100}%`;
-      document.documentElement.style.setProperty('--verse-font-scale', String(verseFontScale));
+      applyDisplayPreferences({ darkTheme, fontScale, verseFontScale });
       this.sync.startAutoSync();
       if (!(await this.sync.contentUrl()).includes('YOUR-USERNAME')) void this.sync.syncNow().catch(() => undefined);
     } catch (error) {

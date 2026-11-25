@@ -35,6 +35,7 @@ Playback and export tests can run with airplane mode enabled to verify offline b
 - All 19 app unit/integration tests passed, including complete Arabic verse copying, immediate player dismissal, and independent verse font scaling.
 - Six Android instrumentation tests passed on Pixel 4 API 34, including native clipboard writes, microphone permission isolation, recording and playback, public WAV export, share-sheet launch, and backup restore.
 - Copy controls, the player close button, and the verse font-size panel were visually verified on mobile-sized screens.
+- Explicit display-settings saving was verified. The verse CSS specificity fix was measured in Chromium: mobile verse text increased from 14px to 34.8px at a 150% setting.
 
 ## Verified results on 2026-11-23
 

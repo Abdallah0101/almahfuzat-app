@@ -9,6 +9,7 @@ import { BackupFileResult } from '../core/backup/native-backup';
 import { PlayerService } from '../core/audio/player.service';
 import { SyncService } from '../core/content/sync.service';
 import { DatabaseService } from '../core/database/database.service';
+import { applyDisplayPreferences } from '../core/display.utils';
 
 @Component({ selector: 'app-settings', imports: [CommonModule, FormsModule, ...IONIC_COMPONENTS], templateUrl: './settings.page.html' })
 export class SettingsPage implements OnInit {
@@ -50,25 +51,29 @@ export class SettingsPage implements OnInit {
     catch (error) { await this.show(error instanceof Error ? error.message : String(error)); }
   }
 
-  async setDarkTheme(): Promise<void> {
-    document.documentElement.dataset['theme'] = this.darkTheme ? 'dark' : 'light';
-    await this.db.setSetting('dark_theme', this.darkTheme);
+  previewDisplaySettings(): void {
+    applyDisplayPreferences(this);
   }
 
-  async setFontScale(): Promise<void> {
-    document.documentElement.style.fontSize = `${this.fontScale * 100}%`;
-    await this.db.setSetting('font_scale', this.fontScale);
-  }
-
-  async setVerseFontScale(): Promise<void> {
+  async saveDisplaySettings(): Promise<void> {
+    this.fontScale = Math.min(1.6, Math.max(0.85, this.fontScale));
     this.verseFontScale = Math.min(2, Math.max(0.85, this.verseFontScale));
-    document.documentElement.style.setProperty('--verse-font-scale', String(this.verseFontScale));
-    await this.db.setSetting('verse_font_scale', this.verseFontScale);
+    this.previewDisplaySettings();
+    try {
+      await Promise.all([
+        this.db.setSetting('dark_theme', this.darkTheme),
+        this.db.setSetting('font_scale', this.fontScale),
+        this.db.setSetting('verse_font_scale', this.verseFontScale)
+      ]);
+      await this.show('تم حفظ إعدادات العرض وحجم خط الآيات.');
+    } catch (error) {
+      await this.show(error instanceof Error ? error.message : String(error));
+    }
   }
 
-  async adjustVerseFontScale(delta: number): Promise<void> {
-    this.verseFontScale = Number((this.verseFontScale + delta).toFixed(2));
-    await this.setVerseFontScale();
+  adjustVerseFontScale(delta: number): void {
+    this.verseFontScale = Math.min(2, Math.max(0.85, Number((this.verseFontScale + delta).toFixed(2))));
+    this.previewDisplaySettings();
   }
 
   async setKeepAttempts(): Promise<void> { await this.db.setSetting('keep_attempts', this.keepAttempts); }

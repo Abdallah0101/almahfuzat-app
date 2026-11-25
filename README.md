@@ -16,7 +16,7 @@ No GitHub account, API token, backend, or audio subscription is required.
 
 ## Working features
 
-- Arabic library search, science filters, memorization statistics, adjustable interface and verse font sizes, bottom navigation, a visual progress dashboard, bundled Noto Sans Arabic typography, and a persistent dark theme.
+- Arabic library search, science filters, memorization statistics, adjustable interface and verse font sizes with an explicit display-settings save button, bottom navigation, a visual progress dashboard, bundled Noto Sans Arabic typography, and a persistent dark theme.
 - Verse copying for research and an immediately dismissible audio player.
 - Stable `(poem_id, verse_id)` identity for recordings and memorization state.
 - AAC/M4A recording per verse, preview, replacement, and optional recording history.
