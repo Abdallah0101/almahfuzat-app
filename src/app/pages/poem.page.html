@@ -167,6 +167,9 @@
                 @if (verse.recording) {
                   <ion-button size="small" fill="outline" (click)="playSingle(verse)"><ion-icon name="play-outline" /> استماع</ion-button>
                 }
+                <ion-button class="copy-button" size="small" fill="clear" (click)="copyVerse(verse)" [attr.aria-label]="'نسخ البيت ' + verse.number">
+                  <ion-icon name="copy-outline" /> نسخ البيت
+                </ion-button>
               </div>
 
               @if (recording.session | async; as session) {

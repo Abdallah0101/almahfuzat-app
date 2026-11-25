@@ -1,6 +1,6 @@
 {
   "name": "almahfuzat-app",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "type": "module",
   "packageManager": "npm@11.6.2",
@@ -29,6 +29,7 @@
     "@capacitor-community/sqlite": "^8.1.1",
     "@capacitor/android": "^8.6.2",
     "@capacitor/app": "^8.1.2",
+    "@capacitor/clipboard": "^8.0.1",
     "@capacitor/core": "^8.6.2",
     "@capacitor/filesystem": "^8.1.5",
     "@capacitor/network": "^8.0.1",

@@ -18,6 +18,9 @@ import { IONIC_COMPONENTS } from '../ionic.imports';
               <div class="title">{{ state.title }} <span>· البيت {{ state.verseNumber }}</span></div>
             </div>
             <span class="queue-count">{{ state.currentIndex + 1 }} / {{ state.itemCount }}</span>
+            <ion-button class="dismiss-control" fill="clear" (click)="player.stop()" aria-label="إغلاق المشغل وإيقاف الاستماع" title="إغلاق المشغل">
+              <ion-icon name="close-outline" />
+            </ion-button>
           </div>
           <ion-range [min]="0" [max]="state.durationMs || 1" [value]="state.positionMs"
             (ionChange)="seek($event.detail.value)" aria-label="موضع التشغيل" />
@@ -37,7 +40,6 @@ import { IONIC_COMPONENTS } from '../ionic.imports';
                 <ion-select-option [value]="1.25">1.25x</ion-select-option>
                 <ion-select-option [value]="1.5">1.5x</ion-select-option>
               </ion-select>
-              <ion-button class="stop-control" fill="clear" color="danger" (click)="player.stop()" aria-label="إيقاف نهائي"><ion-icon name="stop-outline" /></ion-button>
             </div>
           </div>
           @if (state.error) { <ion-note color="danger" class="player-error">{{ state.error }}</ion-note> }
@@ -62,7 +64,8 @@ import { IONIC_COMPONENTS } from '../ionic.imports';
     ion-button ion-icon { font-size: 1.25rem; }
     .main-control { width: 43px; height: 41px; --background: #174d3f; --color: #fff; --background-hover: #0f3e33; --border-radius: 13px; box-shadow: 0 5px 14px rgb(23 77 63 / 20%); }
     .secondary-controls { padding: 2px 5px; border-radius: 10px; background: #f4f6f2; }
-    .stop-control { width: 31px; height: 30px; min-height: 30px; }
+    .dismiss-control { width: 34px; height: 34px; min-height: 34px; flex: 0 0 34px; --color: #6e7f75; --background: #f1f4f0; --border-radius: 10px; }
+    .dismiss-control ion-icon { font-size: 1.2rem; }
     ion-select { width: 65px; min-height: 30px; padding: 0 7px; color: #526b5d; font-size: .65rem; font-weight: 700; }
     .player-error { display: block; padding-top: 4px; font-size: .65rem; }
     :host-context(html[data-theme='dark']) .player { border-color: #2b3b33; background: rgb(23 33 29 / 97%); box-shadow: 0 14px 45px rgb(0 0 0 / 42%); }

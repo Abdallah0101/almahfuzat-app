@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Clipboard } from '@capacitor/clipboard';
 import { AlertController, ToastController } from '@ionic/angular';
 import { IONIC_COMPONENTS } from '../ionic.imports';
 import { ExportService } from '../core/audio/export.service';
@@ -56,6 +57,15 @@ export class PoemPage implements OnInit {
     this.verses.set(await this.repository.verses(id));
     this.rangeEnd = Math.min(50, this.verses().length);
     this.settings = await this.db.getSetting('playback_settings', this.settings);
+  }
+
+  async copyVerse(verse: VerseView): Promise<void> {
+    try {
+      await Clipboard.write({ string: verse.text });
+      await this.toast(`تم نسخ البيت ${verse.number}. يمكنك لصقه في البحث أو تطبيق آخر.`);
+    } catch (error) {
+      await this.toast(error instanceof Error ? error.message : 'تعذر نسخ البيت.', 'danger');
+    }
   }
 
   toggle(id: string): void {

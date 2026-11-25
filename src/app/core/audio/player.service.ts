@@ -55,7 +55,14 @@ export class PlayerService {
 
   async pause(): Promise<void> { await NativeAudio.pause(); }
   async resume(): Promise<void> { await NativeAudio.resume(); }
-  async stop(): Promise<void> { await NativeAudio.stop(); }
+  async stop(): Promise<void> {
+    try { await NativeAudio.stop(); }
+    finally {
+      this.currentItems = [];
+      this.currentSettings = undefined;
+      this.state.next(emptyState);
+    }
+  }
   async next(): Promise<void> { await NativeAudio.next(); }
   async previous(): Promise<void> { await NativeAudio.previous(); }
   async seek(positionMs: number): Promise<void> { await NativeAudio.seekTo({ positionMs }); }

@@ -54,6 +54,7 @@
   --ion-color-medium-shade: #5c6962;
   --ion-color-medium-tint: #77857d;
   --font-scale: 1;
+  --verse-font-scale: 1.15;
 }
 
 html { font-size: 100%; }
@@ -416,7 +417,7 @@ a { color: inherit; text-decoration: none; }
 .verse-selection ion-select { max-width: 145px; min-height: 34px; padding: 4px 9px; border: 1px solid #e5e9e3; border-radius: 9px; background: #f6f8f5; color: #51685b; font-size: .69rem; }
 .changed-text-badge { margin: 0 17px 10px; }
 .verse-body { position: relative; margin: 0 17px; padding: 20px 18px; border-radius: 15px; background: linear-gradient(135deg, #f8f7f2, #f5f6f1); text-align: center; }
-.verse-text { margin: 0; color: #203b32; font-family: var(--app-font-display); font-size: 1.54rem; line-height: 2.05; white-space: pre-wrap; text-align: center; }
+.verse-text { --verse-base-size: 1.54rem; margin: 0; color: #203b32; font-family: var(--app-font-display); font-size: calc(var(--verse-base-size) * var(--verse-font-scale)); line-height: 2.05; white-space: pre-wrap; text-align: center; }
 .verse-divider { display: flex; align-items: center; justify-content: center; gap: 8px; width: 75px; margin: 4px auto; }
 .verse-divider::before,
 .verse-divider::after { width: 25px; height: 1px; background: #ded8ca; content: ''; }
@@ -459,7 +460,7 @@ a { color: inherit; text-decoration: none; }
 .review-poem span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .review-count { flex: 0 0 auto; color: #8a948e; font-size: .61rem; }
 .review-verse { margin: 14px 0 12px; padding: 17px 15px; border-radius: 14px; background: #f7f7f2; }
-.review-verse .verse-text { font-size: 1.43rem; }
+.review-verse .verse-text { --verse-base-size: 1.43rem; }
 .review-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .review-number { color: #89948d; font-size: .63rem; }
 .review-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
@@ -510,9 +511,17 @@ a { color: inherit; text-decoration: none; }
 .settings-note ion-icon { flex: 0 0 auto; margin-top: 2px; color: #85968a; font-size: 1rem; }
 .settings-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .settings-actions ion-button { font-size: .7rem; }
+.verse-font-panel { margin-top: 10px; padding: 12px 13px; border: 1px solid #e7eae5; border-radius: 12px; background: #f7f8f5; }
+.font-control-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #586c60; font-size: .7rem; }
+.font-control-heading span { display: flex; align-items: center; gap: 7px; }
+.font-control-heading ion-icon { color: #8a7348; font-size: 1rem; }
+.font-control-heading strong { color: var(--app-emerald); font-size: .72rem; }
+.font-control-row { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
+.font-control-row ion-range { flex: 1; min-width: 0; padding: 0; }
+.font-adjust { width: 39px; min-width: 39px; height: 36px; min-height: 36px; margin: 0; font-size: 1.1rem; }
 .reading-preview { position: relative; overflow: hidden; margin: 15px 0 12px; padding: 17px; border: 1px solid #e8e0d1; border-radius: 14px; background: #f8f4eb; }
 .reading-preview::before { position: absolute; top: 9px; right: 11px; color: #d9c9aa; content: '﴾'; font-family: var(--app-font-display); font-size: 1.3rem; }
-.reading-preview .verse-text { font-size: 1.35rem; }
+.reading-preview .verse-text { --verse-base-size: 1.35rem; }
 .archived-note { margin: 12px 0 0; color: var(--app-ink-soft); font-size: .66rem; line-height: 1.8; }
 .backup-description { margin: 4px 0 0; color: var(--app-ink-soft); font-size: .7rem; line-height: 1.9; }
 .privacy-note { display: flex; align-items: center; gap: 7px; margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: #edf3ee; color: #527060; font-size: .64rem; }
@@ -559,7 +568,9 @@ ion-card { background: var(--app-surface); }
 :root[data-theme='dark'] .poem-stats,
 :root[data-theme='dark'] .control-field,
 :root[data-theme='dark'] .export-status,
-:root[data-theme='dark'] .playlist-setting { border-color: #2b3a33; background: #202c26; color: #b3c4ba; }
+:root[data-theme='dark'] .playlist-setting,
+:root[data-theme='dark'] .verse-font-panel { border-color: #2b3a33; background: #202c26; color: #b3c4ba; }
+:root[data-theme='dark'] .font-control-heading { color: #b3c4ba; }
 :root[data-theme='dark'] .settings-field { --background: #202c26; border-color: #2b3a33; }
 :root[data-theme='dark'] .filter-row,
 :root[data-theme='dark'] .poem-stat,
@@ -666,7 +677,7 @@ ion-card { background: var(--app-surface); }
   .verse-selection { gap: 4px; }
   .verse-selection ion-select { max-width: 126px; font-size: .66rem; }
   .verse-body { margin-inline: 12px; padding: 17px 10px; }
-  .verse-text { font-size: 1.45rem; }
+  .verse-text { --verse-base-size: 1.45rem; }
   .verse-actions { padding: 11px 12px 13px; }
   .recording-panel { margin-inline: 12px; }
   .goal-card { padding: 20px 16px; }

@@ -14,6 +14,7 @@ import { DatabaseService } from '../core/database/database.service';
 export class SettingsPage implements OnInit {
   contentUrl = '';
   fontScale = 1;
+  verseFontScale = 1.15;
   darkTheme = false;
   keepAttempts = true;
   lastSync = '';
@@ -26,12 +27,21 @@ export class SettingsPage implements OnInit {
     private readonly alerts: AlertController, private readonly toasts: ToastController) {}
 
   async ngOnInit(): Promise<void> {
-    this.contentUrl = await this.sync.contentUrl();
-    this.fontScale = await this.db.getSetting('font_scale', 1);
-    this.darkTheme = await this.db.getSetting('dark_theme', false);
-    this.keepAttempts = await this.db.getSetting('keep_attempts', true);
-    this.lastSync = await this.db.getSetting('last_successful_sync', '');
-    const archived = await this.db.query<{ count: number }>('SELECT COUNT(*) AS count FROM recordings WHERE is_archived=1');
+    const [contentUrl, fontScale, darkTheme, verseFontScale, keepAttempts, lastSync, archived] = await Promise.all([
+      this.sync.contentUrl(),
+      this.db.getSetting('font_scale', 1),
+      this.db.getSetting('dark_theme', false),
+      this.db.getSetting('verse_font_scale', 1.15),
+      this.db.getSetting('keep_attempts', true),
+      this.db.getSetting('last_successful_sync', ''),
+      this.db.query<{ count: number }>('SELECT COUNT(*) AS count FROM recordings WHERE is_archived=1')
+    ]);
+    this.contentUrl = contentUrl;
+    this.fontScale = fontScale;
+    this.darkTheme = darkTheme;
+    this.verseFontScale = verseFontScale;
+    this.keepAttempts = keepAttempts;
+    this.lastSync = lastSync;
     this.archivedCount.set(archived[0]?.count ?? 0);
   }
 
@@ -48,6 +58,17 @@ export class SettingsPage implements OnInit {
   async setFontScale(): Promise<void> {
     document.documentElement.style.fontSize = `${this.fontScale * 100}%`;
     await this.db.setSetting('font_scale', this.fontScale);
+  }
+
+  async setVerseFontScale(): Promise<void> {
+    this.verseFontScale = Math.min(2, Math.max(0.85, this.verseFontScale));
+    document.documentElement.style.setProperty('--verse-font-scale', String(this.verseFontScale));
+    await this.db.setSetting('verse_font_scale', this.verseFontScale);
+  }
+
+  async adjustVerseFontScale(delta: number): Promise<void> {
+    this.verseFontScale = Number((this.verseFontScale + delta).toFixed(2));
+    await this.setVerseFontScale();
   }
 
   async setKeepAttempts(): Promise<void> { await this.db.setSetting('keep_attempts', this.keepAttempts); }

@@ -45,7 +45,18 @@
             <ion-label>الوضع الداكن<small>قراءة مريحة في الإضاءة المنخفضة</small></ion-label>
             <ion-toggle slot="end" [(ngModel)]="darkTheme" (ionChange)="setDarkTheme()" aria-label="تفعيل الوضع الداكن" />
           </ion-item>
-          <ion-item class="settings-field font-scale-field" lines="none"><ion-label>حجم الخط</ion-label><ion-range [min]="0.85" [max]="1.6" [step]="0.05" [(ngModel)]="fontScale" (ionChange)="setFontScale()" aria-label="حجم الخط" /></ion-item>
+          <ion-item class="settings-field font-scale-field" lines="none"><ion-label>حجم واجهة التطبيق</ion-label><ion-range [min]="0.85" [max]="1.6" [step]="0.05" [(ngModel)]="fontScale" (ionChange)="setFontScale()" aria-label="حجم واجهة التطبيق" /></ion-item>
+          <div class="verse-font-panel">
+            <div class="font-control-heading">
+              <span><ion-icon name="text-outline" /> حجم خط الآيات</span>
+              <strong dir="ltr">{{ (verseFontScale * 100).toFixed(0) }}%</strong>
+            </div>
+            <div class="font-control-row">
+              <ion-button class="font-adjust" fill="outline" (click)="adjustVerseFontScale(-0.05)" [disabled]="verseFontScale <= 0.85" aria-label="تصغير خط الآيات">−</ion-button>
+              <ion-range [min]="0.85" [max]="2" [step]="0.05" [(ngModel)]="verseFontScale" (ionChange)="setVerseFontScale()" aria-label="حجم خط الآيات" />
+              <ion-button class="font-adjust" fill="outline" (click)="adjustVerseFontScale(0.05)" [disabled]="verseFontScale >= 2" aria-label="تكبير خط الآيات">+</ion-button>
+            </div>
+          </div>
           <div class="reading-preview"><p class="verse-text">نَصٌّ عَرَبِيٌّ لِتَجْرِبَةِ حَجْمِ الخَطِّ</p></div>
           <ion-item class="settings-field" lines="none"><ion-label>الاحتفاظ بمحاولات التسجيل القديمة</ion-label><ion-toggle slot="end" [(ngModel)]="keepAttempts" (ionChange)="setKeepAttempts()" /></ion-item>
           <p class="archived-note">التسجيلات المؤرشفة المحفوظة بعد حذف أبياتها: {{ archivedCount() }}</p>

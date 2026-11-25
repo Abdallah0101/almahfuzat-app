@@ -4,7 +4,7 @@ import { IONIC_COMPONENTS } from './ionic.imports';
 import { addIcons } from 'ionicons';
 import {
   addOutline, arrowBackOutline, arrowForwardOutline, bookOutline, bookmarkOutline, checkmarkCircleOutline,
-  checkmarkDoneOutline, checkmarkOutline, chevronBackOutline, closeOutline, createOutline, downloadOutline,
+  checkmarkDoneOutline, checkmarkOutline, chevronBackOutline, closeOutline, copyOutline, createOutline, downloadOutline,
   folderOpenOutline, informationCircleOutline, libraryOutline, listOutline, micOutline, moonOutline, musicalNotesOutline,
   optionsOutline, pauseOutline, playBackOutline, playForwardOutline, playOutline, refreshOutline, repeatOutline,
   saveOutline, settingsOutline, shareOutline, shieldCheckmarkOutline, stopOutline, textOutline, timerOutline,
@@ -32,7 +32,7 @@ export class App implements OnInit {
     });
     addIcons({
       addOutline, arrowBackOutline, arrowForwardOutline, bookOutline, bookmarkOutline, checkmarkCircleOutline,
-      checkmarkDoneOutline, checkmarkOutline, chevronBackOutline, closeOutline, createOutline, downloadOutline,
+      checkmarkDoneOutline, checkmarkOutline, chevronBackOutline, closeOutline, copyOutline, createOutline, downloadOutline,
       folderOpenOutline, informationCircleOutline, libraryOutline, listOutline, micOutline, moonOutline, musicalNotesOutline,
       optionsOutline, pauseOutline, playBackOutline, playForwardOutline, playOutline, refreshOutline, repeatOutline,
       saveOutline, settingsOutline, shareOutline, shieldCheckmarkOutline, stopOutline, textOutline, timerOutline,
@@ -44,10 +44,14 @@ export class App implements OnInit {
     try {
       await this.db.init();
       await this.sync.seedDemo();
-      const darkTheme = await this.db.getSetting('dark_theme', false);
+      const [darkTheme, fontScale, verseFontScale] = await Promise.all([
+        this.db.getSetting('dark_theme', false),
+        this.db.getSetting('font_scale', 1),
+        this.db.getSetting('verse_font_scale', 1.15)
+      ]);
       document.documentElement.dataset['theme'] = darkTheme ? 'dark' : 'light';
-      const fontScale = await this.db.getSetting('font_scale', 1);
       document.documentElement.style.fontSize = `${fontScale * 100}%`;
+      document.documentElement.style.setProperty('--verse-font-scale', String(verseFontScale));
       this.sync.startAutoSync();
       if (!(await this.sync.contentUrl()).includes('YOUR-USERNAME')) void this.sync.syncNow().catch(() => undefined);
     } catch (error) {

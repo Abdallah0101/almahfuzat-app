@@ -28,7 +28,13 @@ Playback and export tests can run with airplane mode enabled to verify offline b
 - SHA-256 mismatch rejection without damaging the previous catalog.
 - Recording replacement with and without history retention.
 - Backup restore into a fresh database, idempotency, and conflict handling.
-- Native AAC recording, microphone-only permission requests without legacy storage access, sequential Media3 playback, repeats, background/screen-off playback, WAV export to public Downloads, share intent permissions, persistent dark-theme selection, and ZIP restore.
+- Native AAC recording, microphone-only permission requests without legacy storage access, sequential Media3 playback, repeats, background/screen-off playback, WAV export to public Downloads, share intent permissions, persistent display preferences, native clipboard writes, and ZIP restore.
+
+## Verified results on 2026-11-25
+
+- All 19 app unit/integration tests passed, including complete Arabic verse copying, immediate player dismissal, and independent verse font scaling.
+- Six Android instrumentation tests passed on Pixel 4 API 34, including native clipboard writes, microphone permission isolation, recording and playback, public WAV export, share-sheet launch, and backup restore.
+- Copy controls, the player close button, and the verse font-size panel were visually verified on mobile-sized screens.
 
 ## Verified results on 2026-11-23
 

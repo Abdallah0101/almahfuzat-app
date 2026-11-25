@@ -48,7 +48,7 @@ public class AndroidAudioInstrumentedTest {
         JSONArray items = new JSONArray();
         for (int number = 1; number <= 5; number++) {
             String path = "recordings/instrumented-" + number + ".m4a";
-            record(NativeFiles.inAppFiles(context, path), 650);
+            record(NativeFiles.inAppFiles(context, path), 1000);
             JSONObject item = new JSONObject();
             item.put("poemId", "instrumented-poem");
             item.put("verseId", "stable-" + number);
